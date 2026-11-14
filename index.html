@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Đường tới khoa Răng Hàm Mặt VLU - Cơ sở chính</title>
+  
+  <!-- Google Fonts: Be Vietnam Pro -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Be Vietnam Pro"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            vlu: {
+              red: '#C8102E',      // Đỏ đô chuẩn VLU
+              redDark: '#A00D24',
+              redLight: '#FFF1F2',
+              navy: '#1B2A4A',     // Xanh Navy đậm VLU
+              navyLight: '#2D4373',
+              gold: '#F59E0B',
+              bgLight: '#F8FAFC'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Be Vietnam Pro', system-ui, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    /* Tuyến đường chuyển động mượt, thư thái, không gây rối mắt */
+    @keyframes dashMoveSlowVehicle {
+      to {
+        stroke-dashoffset: -68;
+      }
+    }
+
+    @keyframes dashMoveSlowWalk {
+      to {
+        stroke-dashoffset: -56;
+      }
+    }
+
+    .route-vehicle {
+      stroke-dasharray: 18, 16;
+      animation: dashMoveSlowVehicle 3.2s linear infinite;
+    }
+
+    .route-walk {
+      stroke-dasharray: 14, 14;
+      animation: dashMoveSlowWalk 2.8s linear infinite;
+    }
+
+    /* Điểm tương tác / Khối nhà (Êm dịu, chống giật rung khi hover chuột vào chữ) */
+    .interactive-element {
+      cursor: pointer;
+      transition: filter 0.2s ease, opacity 0.2s ease;
+    }
+    .interactive-element:hover {
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.22)) brightness(1.08);
+    }
+    .interactive-element text {
+      pointer-events: none;
+      user-select: none;
+    }
+
+    #mapContainer {
+      touch-action: none;
+      user-select: none;
+    }
+
+    #mapSvg {
+      will-change: transform;
+    }
+
+    /* Chế độ xem mở rộng toàn màn hình */
+    .map-fullscreen {
+      position: fixed !important;
+      inset: 0 !important;
+      z-index: 50 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+    }
+
+    /* Thanh cuộn */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F1F5F9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CBD5E1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94A3B8;
+    }
+  </style>
+
+  <!-- Nạp cấu hình các điểm mốc từ Google Apps Script hoặc fallback file local -->
+  <script>
+/**
+ * ====================================================================
+ * DỮ LIỆU CÁC ĐIỂM MỐC TRÊN BẢN ĐỒ (LANDMARKS CONFIGURATION)
+ * KHOA RĂNG HÀM MẶT - TRƯỜNG ĐẠI HỌC VĂN LANG (CƠ SỞ CHÍNH)
+ * ====================================================================
+ */
+
+var LANDMARKS_CONFIG = {
+  "toa-g": {
+    id: "toa-g",
+    name: "Khoa Răng Hàm Mặt (Lầu 12 - Tòa G)",
+    badge: "ĐÍCH ĐẾN KHÁM BỆNH",
+    badgeColor: "#C8102E",
+    tagline: "Khu vực tiếp nhận & điều trị bệnh nhân Khoa Răng Hàm Mặt VLU (Lầu 12 Tòa G)",
+    description: "Khoa Răng Hàm Mặt của Trường Đại học Văn Lang đặt tại Lầu 12 - Tòa G. Nơi đây quy tụ hệ thống ghế máy nha khoa hiện đại, phòng chẩn đoán hình ảnh kỹ thuật số (CT Cone Beam), khu vô trùng trung tâm và các phòng điều trị chuyên sâu.",
+    floorGuide: "Tầng Trệt: Quầy tiếp đón, hướng dẫn & thang máy lên khoa | Lầu 12 (Tòa G): Khu tiếp nhận khám bệnh, hồ sơ bệnh án & các phòng khám điều trị chuyên khoa RHM.",
+    patientTips: "Quý bệnh nhân và người nhà vui lòng bước vào sảnh chính Tầng Trệt Tòa G, di chuyển bằng thang máy lên Lầu 12. Đội ngũ lễ tân và sinh viên hướng dẫn sẽ hỗ trợ tiếp nhận số thứ tự và phân luồng vào phòng khám phù hợp.",
+    imageUrl: "",
+    imageCaption: "Sảnh tiếp đón bệnh nhân Khoa RHM tại Lầu 12 Tòa G",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 492, y: 450 }
+  },
+
+  "ham-toa-i": {
+    id: "ham-toa-i",
+    name: "Lối Vào Hầm Giữ Xe Tòa I",
+    badge: "BÃI GIỮ XE MÁY",
+    badgeColor: "#0D9488",
+    tagline: "Bãi giữ xe máy chính dành cho bệnh nhân & người nhà",
+    description: "Hầm giữ xe máy hiện đại, rộng rãi. Lối xuống dốc hầm nằm ngay đầu phía Bắc Tòa I (rẽ trái từ tuyến đường chung quanh Tòa A). Luôn có bảo vệ hướng dẫn quẹt thẻ và điều phối luồng xe.",
+    floorGuide: "Hầm B1 & B2 Tòa I. Dốc vào rộng rãi, có gờ giảm tốc an toàn.",
+    patientTips: "Sau khi gửi xe máy tại Hầm Tòa I, quý khách đi lên lối thang bộ/dốc hầm, rẽ phải và đi bộ ngang qua khu vực Hồ bơi khoảng 50 mét là đến thẳng sảnh đón tiếp Tòa G.",
+    imageUrl: "",
+    imageCaption: "Lối xuống dốc hầm giữ xe máy Tòa I",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 285, y: 280 }
+  },
+
+  "ham-toa-a": {
+    id: "ham-toa-a",
+    name: "Lối Vào Hầm Xe Tòa A & Bãi Ô Tô",
+    badge: "BÃI GIỮ XE Ô TÔ / XE MÁY",
+    badgeColor: "#E11D48",
+    tagline: "Khu vực gửi ô tô và xe máy cán bộ, khách đến liên hệ",
+    description: "Hầm đỗ xe dưới khối Tòa A kết hợp với các vạch đỗ ô tô quy định dọc theo tuyến đường nội bộ của trường.",
+    floorGuide: "Hầm Tòa A & Vạch đỗ xe ô tô dọc tuyến đường nội bộ có biển báo P.",
+    patientTips: "Khi lái ô tô qua Cổng Chính, quý khách giảm tốc độ và làm theo hiệu lệnh của bảo vệ trực cổng để được hướng dẫn vào vị trí đỗ ô tô còn trống trong khuôn viên.",
+    imageUrl: "",
+    imageCaption: "Lối vào hầm Tòa A và vạch đỗ xe ô tô nội bộ",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 435, y: 245 }
+  },
+
+  "cong-chinh": {
+    id: "cong-chinh",
+    name: "Cổng Chính (Đặng Thùy Trâm)",
+    badge: "CỔNG VÀO CHÍNH (XE MÁY / Ô TÔ)",
+    badgeColor: "#1B2A4A",
+    tagline: "69/68 Đặng Thùy Trâm, P. Bình Lợi Trung, Q. Bình Thạnh, TP.HCM",
+    description: "Cổng chính của Cơ sở chính Trường Đại học Văn Lang. Mặt đường rộng thoáng, có nhiều làn phân luồng riêng cho ô tô, xe máy và người đi bộ.",
+    floorGuide: "Chốt bảo vệ thường trực 24/7 kiểm soát ra vào và hướng dẫn vị trí gửi xe.",
+    patientTips: "Quý khách đi xe máy hoặc ô tô cá nhân nên điều hướng theo Google Maps đến đúng Cổng Chính này để vào bãi xe thuận tiện nhất.",
+    imageUrl: "",
+    imageCaption: "Cổng chính khang trang trên đường Đặng Thùy Trâm",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 500, y: 40 }
+  },
+
+  "cong-sau": {
+    id: "cong-sau",
+    name: "Cổng Sau (Dương Quảng Hàm)",
+    badge: "ĐIỂM ĐÓN / TRẢ GRAB & CỔNG SAU",
+    badgeColor: "#F59E0B",
+    tagline: "80/68 Dương Quảng Hàm, P. An Nhơn, Q. Gò Vấp, TP.HCM",
+    description: "Cổng kết nối khuôn viên trường với trục đường Dương Quảng Hàm (quận Gò Vấp). Đây là vị trí thuận tiện nhất để đi Grab / Xe công nghệ vì chỉ cần đi bộ qua cổng là tới thẳng mặt tiền Tòa G.",
+    floorGuide: "Chốt bảo vệ cổng sau kiểm soát ra vào và hỗ trợ hướng dẫn bệnh nhân.",
+    patientTips: "Quý khách đi Grab / Taxi hãy đặt điểm đến tại cổng này, xuống xe và đi bộ thẳng vào Tòa G chỉ khoảng 50m. Lưu ý: Lối đi nội bộ có bảo vệ kiểm soát; nếu bị chặn hỏi, quý khách cứ báo 'Tôi đến khám răng tại Khoa RHM Tòa G' (có thể cần xuất trình CCCD/VNeID) là bảo vệ sẽ cho qua ngay.",
+    imageUrl: "",
+    imageCaption: "Cổng sau khuôn viên hướng đường Dương Quảng Hàm",
+    googleMapsUrl: "https://maps.app.goo.gl/XTdJiLT67RdooXLB8",
+    coords: { x: 480, y: 550 }
+  },
+
+  "cong-phu": {
+    id: "cong-phu",
+    name: "Cổng Sau Phụ (Hẻm 566 Nguyễn Thái Sơn)",
+    badge: "CỔNG SAU PHỤ",
+    badgeColor: "#64748B",
+    tagline: "Hẻm 566 Nguyễn Thái Sơn, P. An Nhơn, Q. Gò Vấp, TP.HCM",
+    description: "Cổng phụ nằm sát bên hông Tòa I, kết nối ra hẻm 566 Nguyễn Thái Sơn.",
+    floorGuide: "Mở cửa từ Thứ 2 đến Thứ 7 (Đóng cửa lúc 19h00 hàng ngày).",
+    patientTips: "Cổng phụ thuận tiện cho người đi bộ từ hướng hẻm 566 Nguyễn Thái Sơn.",
+    imageUrl: "",
+    imageCaption: "Cổng phụ hẻm 566 Nguyễn Thái Sơn",
+    googleMapsUrl: "https://maps.app.goo.gl/XTdJiLT67RdooXLB8",
+    coords: { x: 160, y: 550 }
+  },
+
+  "ho-boi": {
+    id: "ho-boi",
+    name: "Khu Vực Hồ Bơi & Sân Thể Thao",
+    badge: "MỐC ĐỊNH VỊ CHÍNH",
+    badgeColor: "#0284C7",
+    tagline: "Mốc định vị nằm giữa Tòa I và Tòa G",
+    description: "Khu phức hợp thể thao ngoài trời bao gồm hồ bơi tiêu chuẩn xanh biếc và sân bóng rổ. Đây là mốc nhận diện rõ nhất khi đi bộ từ bãi xe Tòa I sang Tòa G.",
+    floorGuide: "Lối đi bộ lát đá rộng thoáng, có bóng mát cây xanh dọc hồ bơi.",
+    patientTips: "Chỉ cần nhìn thấy làn nước xanh của hồ bơi, bạn chỉ cần đi dọc theo bờ hồ về phía tay phải là chạm ngay mặt tiền Tòa G.",
+    imageUrl: "",
+    imageCaption: "Lối đi bộ rợp bóng mát ven hồ bơi dẫn sang Tòa G",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 365, y: 450 }
+  },
+
+  "toa-a": {
+    id: "toa-a",
+    name: "Tòa Nhà A",
+    badge: "TÒA NHÀ HÀNH CHÍNH & HỘI TRƯỜNG",
+    badgeColor: "#DC2626",
+    tagline: "Khối nhà lớn trung tâm phía Bắc",
+    description: "Tòa A là khối nhà nổi bật ở trung tâm khuôn viên, nơi đặt các hội trường lớn, phòng đào tạo và khối văn phòng.",
+    floorGuide: "Khối nhà nhiều tầng đối diện Cổng chính Đặng Thùy Trâm.",
+    patientTips: "Dành cho bệnh nhân đi xe ô tô gửi tại hầm Tòa A hoặc cần liên hệ công tác hành chính.",
+    imageUrl: "",
+    imageCaption: "Mặt tiền Tòa A ĐH Văn Lang",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 540, y: 185 }
+  },
+
+  "toa-j": {
+    id: "toa-j",
+    name: "Tòa Nhà J",
+    badge: "TÒA GIẢNG ĐƯỜNG",
+    badgeColor: "#4338CA",
+    tagline: "Khối giảng đường nằm phía trên Tòa G",
+    description: "Tòa J là khối giảng đường nằm giữa Tòa I và Tòa K, phía trên sân thể thao và Tòa G.",
+    floorGuide: "Khu vực phòng học lý thuyết của sinh viên.",
+    patientTips: "Bệnh nhân đi bộ từ bãi xe Tòa A đi xuống sẽ đi ngang qua khoảng sân cạnh Tòa J.",
+    imageUrl: "",
+    imageCaption: "Tòa J nhìn từ khoảng sân trung tâm",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 407, y: 310 }
+  },
+
+  "toa-k": {
+    id: "toa-k",
+    name: "Tòa Nhà K (Tòa Tròn)",
+    badge: "TÒA NHÀ TRÒN TRUNG TÂM",
+    badgeColor: "#F97316",
+    tagline: "Điểm nhấn kiến trúc hình tròn màu cam đặc trưng",
+    description: "Tòa K hình trụ tròn độc đáo, là biểu tượng kiến trúc nổi bật ngay giữa trung tâm khuôn viên trường Văn Lang.",
+    floorGuide: "Khu vực dịch vụ, thư viện và không gian sinh hoạt chung.",
+    patientTips: "Mốc định hướng rất dễ nhận biết từ xa vì là tòa nhà hình tròn duy nhất.",
+    imageUrl: "",
+    imageCaption: "Khối kiến trúc tròn đặc sắc của Tòa K",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 535, y: 310 }
+  },
+
+  "toa-bc": {
+    id: "toa-bc",
+    name: "Tòa Nhà B - C",
+    badge: "KHỐI GIẢNG ĐƯỜNG",
+    badgeColor: "#2563EB",
+    tagline: "Cụm phòng học phía Đông Tòa K",
+    description: "Cụm tòa nhà giảng đường liên hoàn B và C phục vụ sinh viên các khoa.",
+    floorGuide: "Nằm sát bên phải Tòa K.",
+    patientTips: "Nằm ở phía Đông khuôn viên, cách Tòa G khoảng 150m.",
+    imageUrl: "",
+    imageCaption: "Cụm Tòa B - C",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 667, y: 310 }
+  },
+
+  "toa-f": {
+    id: "toa-f",
+    name: "Tòa Nhà F",
+    badge: "KHỐI NHÀ LIỀN KỀ",
+    badgeColor: "#059669",
+    tagline: "Nằm ngay cạnh bên phải Tòa G",
+    description: "Tòa F là khối nhà xanh lá cây nằm liền kề sát vách phía Đông của Tòa G.",
+    floorGuide: "Hành lang liên thông trực tiếp với Tòa G.",
+    patientTips: "Nếu bạn thấy Tòa F, bạn đang đứng ngay sát bên hông Tòa G Khoa Răng Hàm Mặt.",
+    imageUrl: "",
+    imageCaption: "Mặt trước Tòa F",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 627, y: 450 }
+  },
+
+  "toa-d": {
+    id: "toa-d",
+    name: "Tòa Nhà D & Lối Lên Hầm Xe",
+    badge: "KHỐI NHÀ ĐÔNG NAM",
+    badgeColor: "#D97706",
+    tagline: "Góc Đông Nam khuôn viên trường",
+    description: "Tòa D nằm ở góc Đông Nam, ngay cạnh lối dẫn xe lên từ tầng hầm ra tuyến đường nội bộ.",
+    floorGuide: "Khu vực kỹ thuật và lối thoát xe hầm.",
+    patientTips: "Lối lên hầm xe gần Tòa D chỉ dành cho xe đi ra, không phải lối vào.",
+    imageUrl: "",
+    imageCaption: "Tòa D và lối dốc lên từ hầm xe",
+    googleMapsUrl: "https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7",
+    coords: { x: 717, y: 450 }
+  },
+
+  "loi-di-noi-bo": {
+    id: "loi-di-noi-bo",
+    name: "Lối Đi Nội Bộ Văn Lang",
+    badge: "LỐI ĐI NỘI BỘ (MÀU CAM)",
+    badgeColor: "#EA580C",
+    tagline: "Tuyến đường nội bộ bao quanh phía Nam và Tây khuôn viên",
+    description: "Tuyến đường nội bộ (dải màu cam) dành riêng cho sinh viên và cán bộ giảng viên trường, có các chốt bảo vệ kiểm soát ra vào để đảm bảo an ninh.",
+    floorGuide: "Kết nối Cổng sau phụ (Hẻm 566), Cổng sau Dương Quảng Hàm với các tòa nhà I, G, F, D.",
+    patientTips: "LƯU Ý QUAN TRỌNG: Tuyến đường này ngăn không cho người không phải sinh viên Văn Lang đi qua. Nếu quý khách/người nhà đến khám răng tại Khoa Răng Hàm Mặt (Tòa G) mà bị bảo vệ chặn lại, CỨ BÁO 'TÔI ĐẾN KHÁM RĂNG TẠI KHOA RĂNG HÀM MẶT' là bảo vệ sẽ cho qua (có thể bảo vệ sẽ yêu cầu xuất trình Căn cước công dân - CCCD / VNeID để đối chiếu).",
+    imageUrl: "",
+    imageCaption: "Tuyến đường nội bộ màu cam trong khuôn viên trường",
+    googleMapsUrl: "https://maps.app.goo.gl/XTdJiLT67RdooXLB8",
+    coords: { x: 450, y: 545 }
+  }
+};
+
+if (typeof window !== 'undefined') {
+  window.LANDMARKS_CONFIG = LANDMARKS_CONFIG;
+}
+</script>
+
+
+</head>
+
+<body class="min-h-screen flex flex-col bg-slate-50 text-slate-900 text-base">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-40 bg-gradient-to-r from-[#101B30] via-[#1B2A4A] to-[#101B30] text-white shadow-lg border-b-[3px] border-vlu-red">
+    <div class="max-w-4xl mx-auto px-3.5 sm:px-4 py-2.5 sm:py-3 flex items-center justify-between gap-3">
+      
+      <!-- Logo & Tiêu đề -->
+      <div class="flex items-center gap-2.5 sm:gap-3.5 min-w-0">
+        <!-- Logo Badge Răng Hàm Mặt -->
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#E01A39] via-vlu-red to-[#9B0A20] flex items-center justify-center font-bold shadow-md shadow-red-950/40 border border-white/20 flex-shrink-0">
+          <svg class="w-6 h-6 sm:w-7 sm:h-7 text-white drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2C8.5 2 6 4.5 6 8c0 4 2 8 3.5 11.5.5 1 1.5 2.5 2.5 2.5s2-1.5 2.5-2.5C16 16 18 12 18 8c0-3.5-2.5-6-6-6Z"/>
+            <path d="M9 8c.5-1.5 1.5-2 3-2s2.5.5 3 2"/>
+          </svg>
+        </div>
+
+        <div class="min-w-0">
+          <!-- Nhãn đơn vị & Cơ sở -->
+          <div class="flex items-center gap-1.5 flex-wrap">
+            <span class="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-white/10 text-red-200 px-2 py-0.5 rounded-md border border-white/10">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+              Khoa Răng Hàm Mặt
+            </span>
+            <span class="text-[11px] text-slate-300 font-medium hidden sm:inline">• Cơ sở chính</span>
+          </div>
+
+          <!-- Tiêu đề chính theo yêu cầu: "Đường tới khoa Răng Hàm Mặt VLU" -->
+          <h1 class="text-base sm:text-xl md:text-2xl font-black text-white tracking-tight truncate leading-tight mt-0.5">
+            Đường tới khoa Răng Hàm Mặt VLU
+          </h1>
+        </div>
+      </div>
+
+      <!-- Nút Gọi Hotline nhanh -->
+      <a href="tel:02871099294" class="group inline-flex items-center gap-2 bg-gradient-to-r from-vlu-red to-red-600 hover:from-red-600 hover:to-vlu-redDark active:scale-95 text-white px-3 sm:px-3.5 py-2 sm:py-2.5 rounded-xl font-bold shadow-md shadow-red-950/40 border border-red-400/30 transition-all flex-shrink-0">
+        <svg class="w-4 h-4 text-white group-hover:rotate-12 transition-transform" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M6.62 10.79a15.053 15.053 0 006.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+        </svg>
+        <div class="flex flex-col text-left leading-none hidden sm:flex">
+          <span class="text-[9px] text-red-200 uppercase font-semibold tracking-wider">Hotline hỗ trợ</span>
+          <span class="text-xs sm:text-sm font-extrabold tracking-wide mt-0.5">028 7109 9294</span>
+        </div>
+        <span class="sm:hidden text-xs font-bold">Hotline</span>
+      </a>
+
+    </div>
+  </header>
+
+  <!-- ==================== BỘ CHUYỂN ĐỔI 3 TAB PHƯƠNG TIỆN ==================== -->
+  <section class="sticky top-[63px] sm:top-[69px] z-30 bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-200 py-2.5 px-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="grid grid-cols-3 gap-1.5 sm:gap-2 p-1.5 bg-slate-100 rounded-2xl border border-slate-200">
+        
+        <!-- Tab 1: Xe máy (Vector Icon) -->
+        <button id="tabMotorbike" onclick="switchTab('motorbike')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 active:scale-95 bg-vlu-red text-white shadow-md border border-red-500">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="5.5" cy="16.5" r="3"/>
+            <circle cx="18.5" cy="16.5" r="3"/>
+            <path d="M5.5 13.5h3l2.5-4.5h4.5l1.5 4.5h1.5"/>
+            <path d="M11 9l2-5h3"/>
+            <path d="M9 16.5h6"/>
+          </svg>
+          <span>Xe máy</span>
+        </button>
+
+        <!-- Tab 2: Xe ô tô (Vector Icon) -->
+        <button id="tabCar" onclick="switchTab('car')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 active:scale-95 text-slate-700 hover:bg-slate-200/70">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 16a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
+            <path d="M15 16a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
+            <path d="M9 16h6"/>
+            <path d="M19 16h2a1 1 0 0 0 1-1v-4a2 2 0 0 0-.6-1.4l-2.4-2.6A2 2 0 0 0 17.5 6.5H6.5a2 2 0 0 0-1.5.5L2.6 9.6A2 2 0 0 0 2 11v4a1 1 0 0 0 1 1h2"/>
+            <path d="M5 11h14"/>
+          </svg>
+          <span>Xe ô tô</span>
+        </button>
+
+        <!-- Tab 3: Grab / Xe công nghệ (Vector Icon) -->
+        <button id="tabGrab" onclick="switchTab('grab')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 active:scale-95 text-slate-700 hover:bg-slate-200/70">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 3h4l1 3H9l1-3Z"/>
+            <path d="M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
+            <path d="M15 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
+            <path d="M9 17h6"/>
+            <path d="M19 17h2a1 1 0 0 0 1-1v-4a2 2 0 0 0-.6-1.4l-2.4-2.6A2 2 0 0 0 17.5 7.5H6.5a2 2 0 0 0-1.5.5L2.6 10.6A2 2 0 0 0 2 12v4a1 1 0 0 0 1 1h2"/>
+            <path d="M4 12h16"/>
+          </svg>
+          <span>Grab / Taxi</span>
+        </button>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-4 py-3 flex flex-col gap-3">
+
+    <!-- KHUNG BẢN ĐỒ VECTOR SVG NGUYÊN BẢN (PURE VECTOR MAP) -->
+    <div id="mapCard" class="relative bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden flex flex-col transition-all duration-300">
+      
+      <!-- Toolbar điều khiển Zoom & Mở rộng màn hình -->
+      <div class="px-3.5 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between flex-wrap gap-2 text-xs sm:text-sm">
+        <div class="flex items-center gap-2 font-medium text-slate-700">
+          <span class="inline-block w-2.5 h-2.5 rounded-full bg-vlu-red"></span>
+          <span>Sơ đồ chỉ đường đến Khoa Răng Hàm Mặt (Lầu 12 Tòa G)</span>
+        </div>
+
+        <div class="flex items-center gap-1.5 ml-auto">
+          <!-- Phóng to (+) / Thu nhỏ (-) -->
+          <button onclick="zoomMap(1.3)" class="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold shadow-sm active:scale-95 text-base" title="Phóng to">+</button>
+          <button onclick="zoomMap(0.77)" class="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold shadow-sm active:scale-95 text-base" title="Thu nhỏ">-</button>
+          
+          <!-- Đặt lại góc nhìn -->
+          <button onclick="resetMapView()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center gap-1 text-slate-800 font-semibold shadow-sm active:scale-95 text-xs sm:text-sm" title="Đặt lại góc nhìn">
+            <span>🎯</span>
+            <span class="hidden sm:inline">Đặt lại</span>
+          </button>
+
+          <!-- NÚT PHÓNG TO TOÀN MÀN HÌNH (MỞ RỘNG BẢN ĐỒ) -->
+          <button id="btnFullscreen" onclick="toggleFullscreenMap()" class="px-2.5 py-1 rounded-lg bg-vlu-navy hover:bg-vlu-navyLight text-white flex items-center gap-1 font-semibold shadow-sm active:scale-95 text-xs sm:text-sm transition-all" title="Phóng to mở rộng bản đồ">
+            <span id="fullscreenIcon">⛶</span>
+            <span id="fullscreenText">Mở rộng map</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- BẢN ĐỒ VECTOR SVG NGUYÊN BẢN (1000 x 650) - KHÔNG CÒN RẠCH LĂNG, CÂN ĐỐI & SẮC NÉT -->
+      <div id="mapContainer" class="relative w-full h-[380px] sm:h-[480px] md:h-[530px] bg-[#F8FAFC] overflow-hidden cursor-grab active:cursor-grabbing select-none flex items-center justify-center">
+        
+        <svg id="mapSvg" viewBox="0 0 1000 650" class="w-full h-full transform-gpu origin-top-left transition-transform duration-75">
+          <defs>
+            <!-- Bóng đổ mềm cho tòa nhà -->
+            <filter id="buildingShadow" x="-10%" y="-10%" width="125%" height="125%">
+              <feDropShadow dx="0" dy="3" stdDeviation="3.5" flood-color="#0F172A" flood-opacity="0.16" />
+            </filter>
+
+            <!-- Bóng đổ khuôn viên đất -->
+            <filter id="campusShadow" x="-5%" y="-5%" width="110%" height="110%">
+              <feDropShadow dx="0" dy="4" stdDeviation="7" flood-color="#64748B" flood-opacity="0.10" />
+            </filter>
+
+            <!-- Mũi tên xanh Lối đi chung -->
+            <marker id="arrowBlue" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 L1.5,3 Z" fill="#1D4ED8" />
+            </marker>
+
+            <!-- Mũi tên đỏ Lối đi nội bộ -->
+            <marker id="arrowRed" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 L1.5,3 Z" fill="#DC2626" />
+            </marker>
+
+            <!-- Mũi tên dẫn đường Tab phương tiện -->
+            <marker id="arrowRouteDrive" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 L1.5,3 Z" fill="#1D4ED8" />
+            </marker>
+
+            <marker id="arrowRouteWalk" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto">
+              <path d="M0,0 L6,3 L0,6 L1.5,3 Z" fill="#16A34A" />
+            </marker>
+
+            <!-- Hoa văn sọc rào chắn đường nội bộ -->
+            <pattern id="barrierPattern" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="10" stroke="#1E293B" stroke-width="5" />
+              <line x1="5" y1="0" x2="5" y2="10" stroke="#EA580C" stroke-width="5" />
+            </pattern>
+          </defs>
+
+          <!-- 1. NỀN BẢN ĐỒ SÁNG SỦA, TINH TẾ -->
+          <rect width="1000" height="650" fill="#F8FAFC" />
+
+          <!-- 2. MẶT BẰNG KHUÔN VIÊN TRƯỜNG ĐẠI HỌC VĂN LANG -->
+          <path d="M 180 565 
+                   L 180 250 
+                   Q 185 220 220 215 
+                   L 380 120 
+                   Q 450 90 500 90 
+                   L 540 90 
+                   Q 660 105 760 175 
+                   T 830 380 
+                   L 790 565 Z" 
+                fill="#FFFFFF" stroke="#E2E8F0" stroke-width="2" filter="url(#campusShadow)" />
+
+          <!-- 3. MẠNG LƯỚI ĐƯỜNG XÁ (fill="none" trên mọi stroke, nối đường vươn ra ngoài cổng) -->
+          
+          <!-- LỐI ĐI CHUNG: Nhánh Cổng chính chạy vào (vươn thẳng ra mép trên y=-10) -->
+          <path d="M 500 -10 L 500 100" 
+                fill="none" stroke="#F1F5F9" stroke-width="34" stroke-linecap="round" />
+          <path d="M 500 -10 L 500 100" 
+                fill="none" stroke="#CBD5E1" stroke-width="1.5" />
+
+          <!-- LỐI ĐI CHUNG: Nhánh phía Đông (vươn ra góc dưới bên phải ra đường Lương Ngọc Quyến) -->
+          <path d="M 500 100 Q 640 115 730 180 T 770 380 L 750 520 L 795 645" 
+                fill="none" stroke="#F1F5F9" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 500 100 Q 640 115 730 180 T 770 380 L 750 520 L 795 645" 
+                fill="none" stroke="#CBD5E1" stroke-width="1.5" />
+
+          <!-- LỐI ĐI CHUNG: Nhánh phía Tây (uốn cong qua Tòa J & Tòa I, kết nối chính xác vào Rào chắn Lối đi nội bộ) -->
+          <path d="M 500 100 Q 440 130 385 180 Q 330 220 250 230 L 215 235" 
+                fill="none" stroke="#F1F5F9" stroke-width="34" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M 500 100 Q 440 130 385 180 Q 330 220 250 230 L 215 235" 
+                fill="none" stroke="#CBD5E1" stroke-width="1.5" />
+
+          <!-- Lối nhánh rẽ vào Hầm Tòa A -->
+          <path d="M 440 130 Q 435 175 435 225" 
+                fill="none" stroke="#F1F5F9" stroke-width="30" stroke-linecap="round" />
+
+          <!-- Lối nhánh thông giữa Tòa F và D kết nối xuống Lối đi nội bộ -->
+          <path d="M 660 455 L 660 545" 
+                fill="none" stroke="#F1F5F9" stroke-width="26" stroke-linecap="round" />
+          <path d="M 660 455 L 660 545" 
+                fill="none" stroke="#CBD5E1" stroke-width="1.5" />
+
+          <!-- Mũi tên phân luồng LỐI ĐI CHUNG (Căn chuẩn 100% chính giữa lòng đường trắng) -->
+          <!-- Cổng chính: 1 mũi tên vào thẳng theo trục đường x=500 -->
+          <line x1="500" y1="15" x2="500" y2="70" stroke="#1D4ED8" stroke-width="2.5" marker-end="url(#arrowBlue)" />
+
+          <!-- Nhánh vòng qua Tòa A bên phải: Chạy theo đường cong chuẩn của đường -->
+          <path d="M 600 110 Q 640 115 730 180 Q 770 215 770 340" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-dasharray="12 10" marker-end="url(#arrowBlue)" />
+
+          <!-- Nhánh vòng qua Tòa J/I bên trái: Chạy đúng tim đường cong -->
+          <path d="M 460 120 Q 440 130 385 180 Q 330 220 250 230" fill="none" stroke="#1D4ED8" stroke-width="2" stroke-dasharray="12 10" marker-end="url(#arrowBlue)" />
+
+          <!-- Mũi tên hướng ra đường Lương Ngọc Quyến: Chạy thẳng tim đường nhánh Đông -->
+          <line x1="755" y1="535" x2="782" y2="615" stroke="#1D4ED8" stroke-width="2" marker-end="url(#arrowBlue)" />
+
+          <!-- Chữ HƯỚNG ĐƯỜNG LƯƠNG NGỌC QUYẾN (Nằm gọn hoàn toàn bên trong canvas, dọc theo mép đường ra) -->
+          <g transform="translate(776, 485) rotate(68)">
+            <text x="0" y="0" fill="#475569" font-size="8" font-weight="700">HƯỚNG ĐƯỜNG LƯƠNG NGỌC QUYẾN ➔</text>
+          </g>
+
+          <!-- LỐI ĐI NỘI BỘ VĂN LANG (Màu cam - Bấm để xem lưu ý kiểm soát bảo vệ) -->
+          <g id="node-loi-di-noi-bo" class="interactive-element" onclick="openLandmarkModal('loi-di-noi-bo')">
+            <!-- Trục chính góc chữ L -->
+            <path d="M 215 235 L 215 545 L 735 545" 
+                  fill="none" stroke="#FB923C" stroke-width="28" stroke-linecap="square" stroke-linejoin="round" />
+            <path d="M 215 235 L 215 545 L 735 545" 
+                  fill="none" stroke="#EA580C" stroke-width="1.5" />
+
+            <!-- NỐI ĐƯỜNG RA CỔNG SAU PHỤ (Dương Quảng Hàm - Hẻm 566): Vươn ra mép trái x=120 -->
+            <path d="M 215 545 L 120 545" 
+                  fill="none" stroke="#FB923C" stroke-width="28" stroke-linecap="square" />
+            <path d="M 215 545 L 120 545" 
+                  fill="none" stroke="#EA580C" stroke-width="1.5" />
+
+            <!-- NỐI ĐƯỜNG RA CỔNG SAU (Dương Quảng Hàm): Vươn thẳng xuống mép dưới y=635 (giữa Tòa G và F) -->
+            <path d="M 565 545 L 565 635" 
+                  fill="none" stroke="#FB923C" stroke-width="28" stroke-linecap="square" />
+            <path d="M 565 545 L 565 635" 
+                  fill="none" stroke="#EA580C" stroke-width="1.5" />
+
+            <!-- RÀO CHẮN PHÂN CÁCH SỌC CAM/ĐEN (Góc trên bên trái & góc dưới bên phải) -->
+            <rect x="198" y="227" width="34" height="14" rx="2" fill="url(#barrierPattern)" stroke="#1E293B" stroke-width="1.5" transform="rotate(-15 215 235)" />
+            <rect x="730" y="531" width="12" height="28" rx="2" fill="url(#barrierPattern)" stroke="#1E293B" stroke-width="1.5" />
+
+            <!-- Đường nét đứt màu đỏ và Mũi tên chỉ hướng LỐI ĐI NỘI BỘ (Được giảm bớt tối đa) -->
+            <line x1="215" y1="280" x2="215" y2="350" stroke="#DC2626" stroke-width="2" marker-end="url(#arrowRed)" />
+            <line x1="130" y1="545" x2="190" y2="545" stroke="#DC2626" stroke-width="2" marker-end="url(#arrowRed)" />
+            <line x1="280" y1="545" x2="380" y2="545" stroke="#DC2626" stroke-width="2" stroke-dasharray="12 10" marker-end="url(#arrowRed)" />
+            <line x1="565" y1="625" x2="565" y2="570" stroke="#DC2626" stroke-width="2" marker-end="url(#arrowRed)" />
+            <line x1="680" y1="545" x2="720" y2="545" stroke="#DC2626" stroke-width="2" marker-end="url(#arrowRed)" />
+
+            <!-- Dòng chữ LỐI ĐI NỘI BỘ VĂN LANG -->
+            <text x="390" y="549" fill="#FFFFFF" font-size="10" font-weight="900" letter-spacing="2">LỐI ĐI NỘI BỘ VĂN LANG</text>
+            <text x="210" y="440" fill="#FFFFFF" font-size="9" font-weight="900" letter-spacing="1.5" transform="rotate(-90 210 440)">LỐI ĐI NỘI BỘ VĂN LANG</text>
+          </g>
+
+          <!-- 4. CÁC KHỐI TÒA NHÀ & TIỆN ÍCH -->
+
+          <!-- TÒA A (Được thu gọn thanh thoát, cân đối đúng tỉ lệ với toàn khuôn viên) -->
+          <g id="node-toa-a" class="interactive-element" onclick="openLandmarkModal('toa-a')">
+            <path d="M 450 165 
+                     L 475 135 
+                     L 530 135 
+                     L 540 165 
+                     L 575 165 
+                     A 30 30 0 0 1 635 165 
+                     L 635 203 
+                     L 450 203 Z" 
+                  fill="#D9383A" filter="url(#buildingShadow)" />
+            <text x="542" y="190" fill="#FFFFFF" font-size="17" font-weight="800" text-anchor="middle">TOÀ A</text>
+          </g>
+
+          <!-- LỐI VÀO HẦM XE dưới bên trái Tòa A -->
+          <g class="interactive-element" onclick="openLandmarkModal('ham-toa-a')" transform="translate(425, 235)">
+            <path d="M 12 0 L 12 12" fill="none" stroke="#DC2626" stroke-width="2" marker-end="url(#arrowRed)" />
+            <g transform="translate(24, 0)">
+              <circle cx="6" cy="6" r="6.5" fill="#0284C7" />
+              <text x="6" y="9" font-size="7" fill="#FFFFFF" text-anchor="middle">🚗</text>
+              <circle cx="21" cy="6" r="6.5" fill="#0284C7" />
+              <text x="21" y="9" font-size="7" fill="#FFFFFF" text-anchor="middle">🛵</text>
+              <text x="32" y="9.5" fill="#DC2626" font-size="7.5" font-weight="800">LỐI VÀO HẦM XE</text>
+            </g>
+          </g>
+
+          <!-- HÀNG 1: TÒA J - TÒA K - TÒA B - C (Căn chỉnh thẳng hàng, khoảng cách đều đặn) -->
+
+          <!-- TÒA J (Màu tím xanh, nằm bên trái) -->
+          <g id="node-toa-j" class="interactive-element" onclick="openLandmarkModal('toa-j')">
+            <rect x="350" y="260" width="118" height="62" rx="8" fill="#434F99" filter="url(#buildingShadow)" />
+            <text x="409" y="297" fill="#FFFFFF" font-size="17" font-weight="800" text-anchor="middle">TOÀ J</text>
+          </g>
+
+          <!-- TÒA K (Hình tròn màu cam ở giữa) -->
+          <g id="node-toa-k" class="interactive-element" onclick="openLandmarkModal('toa-k')">
+            <circle cx="525" cy="291" r="32" fill="#F36F21" filter="url(#buildingShadow)" />
+            <circle cx="525" cy="291" r="27" fill="none" stroke="#FDBA74" stroke-width="1.5" stroke-dasharray="4 3" />
+            <text x="525" y="297" fill="#FFFFFF" font-size="16" font-weight="800" text-anchor="middle">TOÀ K</text>
+          </g>
+
+          <!-- TÒA B - C (Khối chữ nhật ngang màu xanh dương bên phải) -->
+          <g id="node-toa-bc" class="interactive-element" onclick="openLandmarkModal('toa-bc')">
+            <rect x="590" y="260" width="125" height="62" rx="8" fill="#3D82D0" filter="url(#buildingShadow)" />
+            <text x="652.5" y="297" fill="#FFFFFF" font-size="17" font-weight="800" text-anchor="middle">TOÀ B - C</text>
+          </g>
+
+          <!-- CỘT BÊN TRÁI: TÒA I (Chạy dọc sát đường nội bộ màu cam) -->
+          <g id="node-toa-i" class="interactive-element" onclick="openLandmarkModal('ham-toa-i')">
+            <rect x="245" y="268" width="52" height="225" rx="10" fill="#1FBBA6" filter="url(#buildingShadow)" />
+            <text x="271" y="385" fill="#FFFFFF" font-size="17" font-weight="800" text-anchor="middle" transform="rotate(-90 271 385)">TOÀ I</text>
+            <circle cx="271" cy="445" r="10" fill="#FFFFFF" />
+            <text x="271" y="449" font-size="9" text-anchor="middle">🛵</text>
+            <circle cx="271" cy="325" r="10" fill="#FFFFFF" />
+            <text x="271" y="329" font-size="9" text-anchor="middle">🛵</text>
+          </g>
+
+          <!-- LỐI VÀO HẦM XE ngay đầu trên Tòa I (Cong từ đường trắng vào hầm Tòa I) -->
+          <g class="interactive-element" onclick="openLandmarkModal('ham-toa-i')" transform="translate(255, 235)">
+            <path d="M 22 2 Q 18 16 16 30" fill="none" stroke="#DC2626" stroke-width="2.5" marker-end="url(#arrowRed)" />
+            <text x="32" y="18" fill="#DC2626" font-size="8" font-weight="800">LỐI VÀO HẦM XE</text>
+          </g>
+
+          <!-- HÀNG 2: HỒ BƠI - TÒA G - TÒA F - TÒA D (Căn chỉnh thẳng hàng ngang, thẩm mỹ) -->
+
+          <!-- SÂN THỂ THAO (Phía trên Hồ bơi) -->
+          <g class="interactive-element" onclick="openLandmarkModal('ho-boi')">
+            <rect x="325" y="365" width="75" height="48" rx="6" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2" />
+            <rect x="331" y="371" width="63" height="36" rx="4" fill="none" stroke="#94A3B8" stroke-width="1" />
+            <circle cx="362.5" cy="389" r="6" fill="none" stroke="#94A3B8" stroke-width="1" />
+          </g>
+
+          <!-- HỒ BƠI (Khối màu xanh nhạt nằm bên phải Tòa I) -->
+          <g id="node-ho-boi" class="interactive-element" onclick="openLandmarkModal('ho-boi')">
+            <rect x="325" y="420" width="75" height="55" rx="8" fill="#4DB4F9" stroke="#38BDF8" stroke-width="1.5" filter="url(#buildingShadow)" />
+            <line x1="343" y1="426" x2="343" y2="469" stroke="#E0F2FE" stroke-width="1.2" stroke-dasharray="3 3" />
+            <line x1="362.5" y1="426" x2="362.5" y2="469" stroke="#E0F2FE" stroke-width="1.2" stroke-dasharray="3 3" />
+            <line x1="382" y1="426" x2="382" y2="469" stroke="#E0F2FE" stroke-width="1.2" stroke-dasharray="3 3" />
+            <text x="362.5" y="453" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">HỒ BƠI</text>
+          </g>
+
+          <!-- TÒA G -> ĐÍCH ĐẾN: KHOA RĂNG HÀM MẶT (LẦU 12) - ĐÃ BỎ Ô VUÔNG LƯỚT LƯỚT GÂY RỐI MẮT -->
+          <g id="node-toa-g" class="interactive-element" onclick="openLandmarkModal('toa-g')">
+            <!-- Khối Tòa G viền đỏ VLU nổi bật -->
+            <rect x="417" y="419" width="151" height="66" rx="10" fill="#F28585" stroke="#C8102E" stroke-width="3" filter="url(#buildingShadow)" />
+            
+            <!-- Chữ TOÀ G nguyên bản ở chính giữa khối -->
+            <text x="492.5" y="458" fill="#FFFFFF" font-size="19" font-weight="900" text-anchor="middle">TOÀ G</text>
+
+            <!-- BẢNG GHIM ĐÍCH ĐẾN ĐẶT PHÍA TRÊN KHỐI TÒA G (Y=388, RÕ RÀNG LẦU 12) -->
+            <g transform="translate(492.5, 388)">
+              <rect x="-95" y="-12" width="190" height="24" rx="12" fill="#C8102E" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
+              <polygon points="-5,12 5,12 0,16" fill="#C8102E" />
+              <text x="0" y="4" fill="#FFFFFF" font-size="9.5" font-weight="900" text-anchor="middle" letter-spacing="0.5">📍 KHOA RHM (LẦU 12 - TÒA G)</text>
+            </g>
+          </g>
+
+          <!-- TÒA F (Khối đứng màu xanh lá đậm bên phải Tòa G) -->
+          <g id="node-toa-f" class="interactive-element" onclick="openLandmarkModal('toa-f')">
+            <rect x="580" y="419" width="58" height="66" rx="8" fill="#138A4B" filter="url(#buildingShadow)" />
+            <text x="609" y="458" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">TOÀ F</text>
+          </g>
+
+          <!-- LỐI LÊN HẦM XE GIỮA TÒA F VÀ D (Khoảng hở rộng rãi 44px, chữ nằm gọn gàng bên trong không bị che) -->
+          <g class="interactive-element" onclick="openLandmarkModal('toa-d')">
+            <path d="M 660 470 L 660 525 Q 660 545 685 545 L 705 545" 
+                  fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrowRed)" />
+            <text x="660" y="445" fill="#DC2626" font-size="7.5" font-weight="800" text-anchor="middle">LỐI LÊN</text>
+            <text x="660" y="455" fill="#DC2626" font-size="7.5" font-weight="800" text-anchor="middle">HẦM XE</text>
+          </g>
+
+          <!-- TÒA D (Khối đứng màu vàng cam ngoài cùng bên phải - được thu gọn thanh thoát) -->
+          <g id="node-toa-d" class="interactive-element" onclick="openLandmarkModal('toa-d')">
+            <rect x="686" y="419" width="62" height="66" rx="8" fill="#F5B838" filter="url(#buildingShadow)" />
+            <text x="717" y="458" fill="#FFFFFF" font-size="15" font-weight="800" text-anchor="middle">TOÀ D</text>
+          </g>
+
+          <!-- 5. 3 CỔNG RA VÀO (Đặt đúng vị trí ngoài rìa bản đồ, chữ KHÔNG che đường đi) -->
+
+          <!-- CỔNG CHÍNH ĐẶNG THÙY TRÂM (Chữ đặt lệch sang trái x=470, không che lòng đường x=500) -->
+          <g id="node-cong-chinh" class="interactive-element" onclick="openLandmarkModal('cong-chinh')">
+            <g transform="translate(470, 24)">
+              <text x="0" y="0" fill="#DC2626" font-size="12" font-weight="900" text-anchor="end">CỔNG CHÍNH ĐẶNG THÙY TRÂM</text>
+              <text x="0" y="14" fill="#475569" font-size="8.5" font-weight="600" text-anchor="end">69/68 Đặng Thùy Trâm, P. Bình Lợi Trung, TP. HCM</text>
+            </g>
+            <circle cx="488" cy="28" r="5" fill="#DC2626" />
+          </g>
+
+          <!-- CỔNG SAU DƯƠNG QUẢNG HÀM (Nằm giữa Tòa G và Tòa F, chữ đặt lệch sang trái không che đường nhánh) -->
+          <g id="node-cong-sau" class="interactive-element" onclick="openLandmarkModal('cong-sau')">
+            <g transform="translate(542, 590)">
+              <text x="0" y="0" fill="#DC2626" font-size="12" font-weight="900" text-anchor="end">CỔNG SAU DƯƠNG QUẢNG HÀM</text>
+              <text x="0" y="14" fill="#475569" font-size="8.5" font-weight="600" text-anchor="end">80/68 Dương Quảng Hàm, P. An Nhơn, TP. HCM</text>
+            </g>
+            <circle cx="550" cy="590" r="5" fill="#DC2626" />
+          </g>
+
+          <!-- CỔNG SAU PHỤ DƯƠNG QUẢNG HÀM (Góc dưới bên trái, đặt dưới đường nhánh x=120) -->
+          <g id="node-cong-phu" class="interactive-element" onclick="openLandmarkModal('cong-phu')">
+            <circle cx="120" cy="545" r="5" fill="#DC2626" />
+            <text x="120" y="576" fill="#DC2626" font-size="11" font-weight="900" text-anchor="middle">CỔNG SAU PHỤ DƯƠNG QUẢNG HÀM</text>
+            <text x="120" y="590" fill="#475569" font-size="8.5" font-weight="600" text-anchor="middle">Hẻm 566 Nguyễn Thái Sơn, Phường An Nhơn, Tp. HCM</text>
+            <text x="120" y="602" fill="#EA580C" font-size="8" font-weight="700" text-anchor="middle">(Mở cửa từ Thứ 2 - Thứ 7 và đóng lúc 19h)</text>
+          </g>
+
+          <!-- 6. BẢNG CHÚ THÍCH (ĐẶT Ở GÓC TRÊN BÊN PHẢI x=795, y=65 - HOÀN TOÀN KHÔNG CHE MAP) -->
+          <g transform="translate(795, 65)" class="select-none">
+            <rect x="0" y="0" width="185" height="92" rx="10" fill="#FFFFFF" fill-opacity="0.96" stroke="#CBD5E1" stroke-width="1.2" filter="url(#buildingShadow)" />
+            <text x="92.5" y="19" fill="#1E293B" font-size="10.5" font-weight="900" text-anchor="middle">CHÚ THÍCH</text>
+            
+            <line x1="16" y1="36" x2="52" y2="36" stroke="#1D4ED8" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowBlue)" />
+            <text x="62" y="40" fill="#334155" font-size="9" font-weight="700">LỐI ĐI CHUNG</text>
+
+            <line x1="16" y1="56" x2="52" y2="56" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowRed)" />
+            <text x="62" y="60" fill="#334155" font-size="9" font-weight="700">LỐI ĐI NỘI BỘ</text>
+
+            <line x1="16" y1="76" x2="50" y2="76" stroke="#16A34A" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="6 4" marker-end="url(#arrowRouteWalk)" />
+            <text x="62" y="80" fill="#16A34A" font-size="9" font-weight="800">LỘ TRÌNH CỦA BẠN</text>
+          </g>
+
+          <!-- 7. TUYẾN ĐƯỜNG CHỈ DẪN DẪN ĐỘNG THEO 3 TAB (DASH THƯ THÁI, CHẠY CHẬM RÕ NÉT) -->
+
+          <!-- === TAB 1: TUYẾN XE MÁY === -->
+          <g id="route-motorbike" class="route-layer pointer-events-none">
+            <!-- Xe máy chạy: Cổng chính -> theo lòng đường trắng bao quanh Tòa A -> Lối vào Hầm Tòa I (Xanh lá động từ Cổng chính) -->
+            <path d="M 500 25 
+                     L 500 100 
+                     Q 440 130 385 180 
+                     Q 330 220 275 235 
+                     L 275 265" 
+                  fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="route-vehicle" marker-end="url(#arrowRouteWalk)" />
+
+            <!-- Điểm dừng gửi xe máy tại Hầm Tòa I -->
+            <g transform="translate(275, 265)">
+              <circle cx="0" cy="0" r="13" fill="#16A34A" stroke="#FFFFFF" stroke-width="2.5" filter="url(#buildingShadow)" />
+              <text x="0" y="4" font-size="11" text-anchor="middle">🅿️</text>
+            </g>
+
+            <!-- Tuyến đi bộ: Từ Tòa I men qua bờ Hồ bơi vào thẳng sảnh Tòa G -->
+            <path d="M 297 325 
+                     Q 335 375 370 410 
+                     L 417 445" 
+                  fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="route-walk" marker-end="url(#arrowRouteWalk)" />
+
+            <g transform="translate(365, 395)">
+              <rect x="-35" y="-9" width="70" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
+              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ 50m</text>
+            </g>
+          </g>
+
+          <!-- === TAB 2: TUYẾN XE Ô TÔ === -->
+          <g id="route-car" class="route-layer pointer-events-none" style="display: none;">
+            <!-- Xe ô tô chạy: Cổng chính -> chạy thẳng theo lối rẽ vào Hầm Tòa A (Xanh lá động từ Cổng chính) -->
+            <path d="M 500 25 
+                     L 500 100 
+                     Q 440 130 435 175 
+                     L 435 225" 
+                  fill="none" stroke="#16A34A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="route-vehicle" marker-end="url(#arrowRouteWalk)" />
+
+            <!-- Điểm dừng gửi xe ô tô tại Hầm Tòa A -->
+            <g transform="translate(435, 225)">
+              <circle cx="0" cy="0" r="13" fill="#16A34A" stroke="#FFFFFF" stroke-width="2.5" filter="url(#buildingShadow)" />
+              <text x="0" y="4" font-size="11" text-anchor="middle">🚗</text>
+            </g>
+
+            <!-- Tuyến đi bộ ô tô: Từ Tòa A xuyên qua khoảng sân giữa Tòa J & K đến sảnh Tòa G -->
+            <path d="M 445 235 
+                     L 475 285 
+                     L 475 365 
+                     L 475 418" 
+                  fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="route-walk" marker-end="url(#arrowRouteWalk)" />
+
+            <g transform="translate(490, 335)">
+              <rect x="-38" y="-9" width="76" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
+              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ 100m</text>
+            </g>
+          </g>
+
+          <!-- === TAB 3: TUYẾN GRAB / XE CÔNG NGHỆ (ĐẾN CỔNG SAU GIỮA TÒA G VÀ F) === -->
+          <g id="route-grab" class="route-layer pointer-events-none" style="display: none;">
+            <!-- Điểm dừng thả khách Grab tại Cổng Sau Dương Quảng Hàm (x=565, y=615) -->
+            <g transform="translate(565, 615)">
+              <circle cx="0" cy="0" r="12" fill="#D97706" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
+              <text x="0" y="4" font-size="11" text-anchor="middle">📍</text>
+            </g>
+
+            <!-- Tuyến đi bộ từ Cổng Sau rẽ thẳng vào sảnh Tòa G (chỉ 50m) -->
+            <path d="M 565 615 
+                     L 565 545 
+                     L 565 486 
+                     L 520 486" 
+                  fill="none" stroke="#16A34A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="route-walk" marker-end="url(#arrowRouteWalk)" />
+
+            <g transform="translate(540, 515)">
+              <rect x="-44" y="-9" width="88" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
+              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ chỉ 50m</text>
+            </g>
+          </g>
+
+        </svg>
+
+      </div>
+    </div>
+
+    <!-- ==================== HƯỚNG DẪN CHI TIẾT THEO TAB ==================== -->
+    <section class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 sm:p-5">
+      
+      <div id="routeHeader" class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-3.5">
+        <div>
+          <span id="routeBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 uppercase tracking-wide">Phương tiện: Xe Máy</span>
+          <h2 id="routeTitle" class="text-lg sm:text-xl font-bold text-vlu-navy mt-1">Hướng Dẫn Đi Xe Máy Vào Khám Bệnh</h2>
+        </div>
+
+        <button onclick="focusToaG()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-vlu-red font-bold text-xs sm:text-sm rounded-xl border border-red-200 flex items-center gap-1 transition-all active:scale-95 flex-shrink-0">
+          <span>🎯</span>
+          <span>Tìm Tòa G</span>
+        </button>
+      </div>
+
+      <!-- Tóm tắt đường đi nhanh -->
+      <div id="quickGuideAlert" class="bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-xl mb-3 text-slate-800 text-sm sm:text-base leading-relaxed">
+        <strong>Tóm tắt:</strong> Đi vào Cổng Chính Đặng Thùy Trâm ➔ Chạy theo đúng lòng đường trắng bao quanh Tòa A để vào Hầm gửi xe Tòa I ➔ Sau đó đi bộ qua hướng Hồ bơi khoảng 50m là đến sảnh Tòa G.
+      </div>
+
+      <!-- Khung Lưu Ý Quan Trọng Về Lối Đi Nội Bộ (Dành cho bệnh nhân) -->
+      <div class="bg-amber-50/90 border-l-4 border-amber-500 rounded-r-xl p-3.5 mb-4 text-slate-800 text-xs sm:text-sm leading-relaxed shadow-sm">
+        <div class="flex items-center gap-1.5 font-bold text-amber-900 text-sm mb-1">
+          <span>⚠️</span>
+          <span>Lưu ý quan trọng khi đi qua Lối đi nội bộ Văn Lang (đường màu cam):</span>
+        </div>
+        <p class="text-slate-700">
+          Tuyến đường nội bộ ngăn không cho những người không phải sinh viên đi lại. Nếu đến khám tại Khoa Răng Hàm Mặt mà bị bảo vệ chặn hỏi, <strong>quý khách cứ báo rõ: <em>"Tôi đến khám răng tại Khoa Răng Hàm Mặt (Tòa G)"</em></strong> là bảo vệ sẽ cho qua (có thể bảo vệ sẽ yêu cầu xuất trình Căn cước công dân - CCCD / VNeID).
+        </p>
+      </div>
+
+      <!-- Các bước cụ thể (Step by Step Timeline) -->
+      <div class="flex flex-col gap-3 mb-5" id="stepList"></div>
+
+      <!-- Nút mở Google Maps dẫn đường -->
+      <a id="btnGoogleMaps" href="https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7" target="_blank" rel="noopener noreferrer" class="w-full bg-vlu-red hover:bg-vlu-redDark active:scale-[0.99] text-white py-3.5 px-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2 transition-all">
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+        <span id="btnGoogleMapsText">Mở Google Maps dẫn đường đến Cổng Chính</span>
+      </a>
+
+    </section>
+
+    <!-- ==================== CÁC VỊ TRÍ TRỌNG YẾU ==================== -->
+    <section class="bg-white rounded-2xl shadow-md border border-slate-200 p-4">
+      <h3 class="font-bold text-slate-800 text-base mb-3 flex items-center gap-2">
+        <span>📍</span>
+        <span>Các Vị Trí Trọng Yếu</span>
+      </h3>
+      
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 text-xs sm:text-sm">
+        <button onclick="openLandmarkModal('toa-g')" class="p-2.5 rounded-xl border-2 border-red-300 bg-red-50 hover:bg-red-100 text-left transition-all">
+          <div class="font-bold text-vlu-red flex items-center gap-1">📍 Tòa G (RHM)</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Đích đến khám bệnh</div>
+        </button>
+
+        <button onclick="openLandmarkModal('ham-toa-i')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-teal-50 hover:border-teal-300 text-left transition-all">
+          <div class="font-bold text-teal-800 flex items-center gap-1">🛵 Hầm Tòa I</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Bãi giữ xe máy</div>
+        </button>
+
+        <button onclick="openLandmarkModal('ham-toa-a')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 hover:border-orange-300 text-left transition-all">
+          <div class="font-bold text-orange-800 flex items-center gap-1">🚗 Hầm Tòa A</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Bãi đỗ xe ô tô</div>
+        </button>
+
+        <button onclick="openLandmarkModal('cong-sau')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-left transition-all">
+          <div class="font-bold text-amber-800 flex items-center gap-1">🚕 Cổng Sau</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Đón/Trả Grab đối diện Tòa G</div>
+        </button>
+
+        <button onclick="openLandmarkModal('loi-di-noi-bo')" class="p-2.5 rounded-xl border border-amber-300 bg-amber-50/80 hover:bg-amber-100 text-left transition-all col-span-2 sm:col-span-1">
+          <div class="font-bold text-amber-900 flex items-center gap-1">🛡️ Lối Đi Nội Bộ</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Lưu ý kiểm soát bảo vệ</div>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== FOOTER ==================== -->
+  <footer class="bg-vlu-navy text-white mt-6 border-t-4 border-vlu-red py-6 px-4">
+    <div class="max-w-4xl mx-auto flex flex-col gap-5">
+      
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-5">
+        <div>
+          <h4 class="font-bold text-lg text-white">KHOA RĂNG HÀM MẶT - ĐẠI HỌC VĂN LANG</h4>
+          <p class="text-slate-300 text-sm mt-0.5">Cơ sở chính: Phường Bình Lợi Trung / An Nhơn, TP. Hồ Chí Minh</p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="tel:02871099294" class="inline-flex items-center gap-2 bg-vlu-red hover:bg-vlu-redDark text-white px-4 py-2.5 rounded-xl font-bold text-sm shadow-md transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+            <span>Hotline: 028 7109 9294</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-slate-300">
+        <div class="flex flex-col gap-2">
+          <span class="font-bold text-white uppercase text-xs tracking-wider">Kênh thông tin trực tuyến:</span>
+          <a href="https://www.facebook.com/ranghammat.vlu/?locale=vi_VN" target="_blank" rel="noopener noreferrer" class="hover:text-white flex items-center gap-2 transition-colors">
+            <svg class="w-4 h-4 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            <span>Fanpage Khoa RHM VLU</span>
+          </a>
+          <a href="mailto:k.ranghammat@vlu.edu.vn" class="hover:text-white flex items-center gap-2 transition-colors">
+            <svg class="w-4 h-4 text-red-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            <span>k.ranghammat@vlu.edu.vn</span>
+          </a>
+        </div>
+
+        <div>
+          <span class="font-bold text-white uppercase text-xs tracking-wider">Cổng chính Đặng Thùy Trâm:</span>
+          <p class="text-xs text-slate-300 mt-1 leading-relaxed">69/68 Đặng Thùy Trâm, Phường Bình Lợi Trung, Q. Bình Thạnh, TP. Hồ Chí Minh</p>
+        </div>
+
+        <div>
+          <span class="font-bold text-white uppercase text-xs tracking-wider">Cổng sau Dương Quảng Hàm:</span>
+          <p class="text-xs text-slate-300 mt-1 leading-relaxed">80/68 Dương Quảng Hàm, Phường An Nhơn, Q. Gò Vấp, TP. Hồ Chí Minh</p>
+        </div>
+      </div>
+
+      <div class="text-center text-xs text-slate-400 border-t border-white/5 pt-3">
+        © 2026 Khoa Răng Hàm Mặt - Trường Đại học Văn Lang. Trang chỉ đường khám bệnh thân thiện cho bệnh nhân.
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ==================== MODAL / BOTTOM SHEET ==================== -->
+  <div id="landmarkModal" class="fixed inset-0 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4 bg-black/60 backdrop-blur-sm transition-opacity duration-300">
+    <div class="fixed inset-0" onclick="closeLandmarkModal()"></div>
+
+    <div id="modalContentBox" class="relative w-full sm:max-w-lg bg-white rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col z-10">
+      
+      <div class="sm:hidden w-full flex justify-center pt-3 pb-1" onclick="closeLandmarkModal()">
+        <div class="w-12 h-1.5 rounded-full bg-slate-300"></div>
+      </div>
+
+      <div class="px-5 py-3 border-b border-slate-100 flex items-start justify-between gap-3">
+        <div>
+          <span id="modalBadge" class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-100 text-vlu-red uppercase">ĐIỂM ĐẾN KHÁM BỆNH</span>
+          <h3 id="modalTitle" class="text-lg sm:text-xl font-bold text-vlu-navy mt-1">Tòa G - Khoa Răng Hàm Mặt</h3>
+          <p id="modalTagline" class="text-xs text-slate-500 mt-0.5">Khu vực tiếp nhận & điều trị bệnh nhân RHM</p>
+        </div>
+
+        <button onclick="closeLandmarkModal()" class="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 font-bold transition-all" title="Đóng">✕</button>
+      </div>
+
+      <div class="p-5 overflow-y-auto space-y-4">
+        
+        <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-center p-4">
+          <img id="modalImage" src="" alt="Hình ảnh thực tế" class="absolute inset-0 w-full h-full object-cover hidden">
+
+          <div id="modalPlaceholder" class="flex flex-col items-center justify-center gap-2 text-slate-500">
+            <div class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div class="text-xs font-semibold text-slate-600 px-4">
+              Hình ảnh mũi tên chỉ dẫn thực tế sẽ được cập nhật tại đây
+            </div>
+            <div id="modalImageCaption" class="text-[11px] text-slate-400 italic">
+              Vị trí điểm mốc thực tế tại khuôn viên
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Mô tả chi tiết:</h4>
+          <p id="modalDesc" class="text-slate-800 text-sm leading-relaxed">
+            Nội dung mô tả vị trí.
+          </p>
+        </div>
+
+        <div id="modalFloorBox" class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-vlu-navy mb-1 flex items-center gap-1.5">
+            <span>🏢</span>
+            <span>Phân luồng & Vị trí đón tiếp:</span>
+          </h4>
+          <p id="modalFloor" class="text-slate-700 text-sm leading-relaxed">
+            Thông tin tầng và cửa vào.
+          </p>
+        </div>
+
+        <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800 mb-1 flex items-center gap-1.5">
+            <span>💡</span>
+            <span>Lời khuyên dành cho bệnh nhân & thân nhân:</span>
+          </h4>
+          <p id="modalTips" class="text-slate-800 text-sm leading-relaxed font-medium">
+            Mẹo lưu ý.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="p-4 bg-slate-50 border-t border-slate-100 flex items-center gap-2">
+        <a id="modalGmapsBtn" href="#" target="_blank" rel="noopener noreferrer" class="flex-1 bg-vlu-navy hover:bg-vlu-navyLight active:scale-95 text-white py-2.5 px-3 rounded-xl font-bold text-sm text-center flex items-center justify-center gap-1.5 transition-all">
+          <span>📍</span>
+          <span>Xem trên Google Maps</span>
+        </a>
+        <button onclick="closeLandmarkModal()" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 active:scale-95 text-slate-800 rounded-xl font-bold text-sm transition-all">
+          Đóng
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    // 1. Dữ liệu tuyến đường 3 Tab
+    const ROUTES_DATA = {
+      motorbike: {
+        id: 'motorbike',
+        name: 'Xe máy',
+        badge: 'Phương tiện: Xe Máy',
+        title: 'Hướng Dẫn Đi Xe Máy Vào Khám Bệnh',
+        quickGuide: '<strong>Tóm tắt:</strong> Đi vào Cổng Chính Đặng Thùy Trâm ➔ Chạy theo đúng lòng đường trắng bao quanh Tòa A để vào Hầm gửi xe Tòa I ➔ Sau đó đi bộ qua hướng Hồ bơi khoảng 50m là đến sảnh Tòa G.',
+        gmapsUrl: 'https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7',
+        gmapsBtnText: 'Mở Google Maps dẫn đường đến Cổng Chính',
+        steps: [
+          {
+            num: 1,
+            title: 'Đến Cổng Chính (Đặng Thùy Trâm)',
+            desc: 'Địa chỉ 69/68 Đặng Thùy Trâm. Đi vào cổng và chạy thẳng theo lòng đường trắng.',
+            landmarkId: 'cong-chinh'
+          },
+          {
+            num: 2,
+            title: 'Gửi xe máy tại Hầm Tòa I',
+            desc: 'Chạy vòng qua Tòa A theo lòng đường trắng để xuống dốc hầm xe máy Tòa I.',
+            landmarkId: 'ham-toa-i'
+          },
+          {
+            num: 3,
+            title: 'Đi bộ qua Hồ bơi đến sảnh Tòa G (Khoa RHM)',
+            desc: 'Lên dốc hầm Tòa I, đi bộ men theo lối cạnh Hồ bơi khoảng 50m là đến sảnh Tòa G.',
+            landmarkId: 'toa-g',
+            highlight: true
+          }
+        ]
+      },
+
+      car: {
+        id: 'car',
+        name: 'Xe ô tô',
+        badge: 'Phương tiện: Xe Ô Tô',
+        title: 'Hướng Dẫn Đi Xe Ô Tô Vào Khám Bệnh',
+        quickGuide: '<strong>Tóm tắt:</strong> Vào Cổng Chính Đặng Thùy Trâm ➔ Chạy thẳng theo lòng đường vào Lối vào Hầm xe Tòa A hoặc đỗ tại các vạch quy định quanh khuôn viên ➔ Đi bộ qua sân giữa Tòa J & K đến Tòa G.',
+        gmapsUrl: 'https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7',
+        gmapsBtnText: 'Mở Google Maps dẫn đường đến Cổng Chính',
+        steps: [
+          {
+            num: 1,
+            title: 'Đến Cổng Chính (Đặng Thùy Trâm)',
+            desc: 'Chạy chậm qua cổng chính, bảo vệ sẽ hướng dẫn vị trí đỗ ô tô còn trống trong khuôn viên.',
+            landmarkId: 'cong-chinh'
+          },
+          {
+            num: 2,
+            title: 'Gửi ô tô tại Hầm Tòa A hoặc vạch đỗ nội bộ',
+            desc: 'Đỗ xe tại hầm dưới khối Tòa A hoặc các ô kẻ vạch dành cho ô tô dọc tuyến đường nội bộ.',
+            landmarkId: 'ham-toa-a'
+          },
+          {
+            num: 3,
+            title: 'Đi bộ qua sân giữa Tòa J & K đến Tòa G',
+            desc: 'Băng qua khoảng sân trung tâm giữa Tòa J và Tòa K khoảng 100m là tới Tòa G.',
+            landmarkId: 'toa-g',
+            highlight: true
+          }
+        ]
+      },
+
+      grab: {
+        id: 'grab',
+        name: 'Grab / Xe công nghệ',
+        badge: 'Phương tiện: Grab / Xe Công Nghệ / Taxi',
+        title: 'Hướng Dẫn Đi Grab / Taxi Đến Khoa Răng Hàm Mặt',
+        quickGuide: '<strong>Tóm tắt:</strong> Đặt điểm đến tại <strong>Cổng Sau (80/68 Dương Quảng Hàm)</strong> ➔ Tài xế thả khách ngay trước cổng ➔ Đi bộ qua cổng vào khuôn viên theo tuyến nội bộ là tới ngay sảnh Tòa G (chỉ khoảng 50m).',
+        gmapsUrl: 'https://maps.app.goo.gl/XTdJiLT67RdooXLB8',
+        gmapsBtnText: 'Mở Google Maps đến Cổng Sau (Dương Quảng Hàm)',
+        steps: [
+          {
+            num: 1,
+            title: 'Đặt điểm đến Grab tại Cổng Sau (Dương Quảng Hàm)',
+            desc: 'Địa chỉ: 80/68 Dương Quảng Hàm, Phường An Nhơn. Xuống xe ngay trước cổng sau trường.',
+            landmarkId: 'cong-sau'
+          },
+          {
+            num: 2,
+            title: 'Đi bộ qua cổng sau vào khuôn viên theo Lối nội bộ',
+            desc: 'Bước qua chốt bảo vệ cổng sau. Lưu ý: Lối nội bộ có bảo vệ kiểm soát; nếu bị chặn hỏi, quý khách cứ báo "Tôi đến khám răng tại Khoa RHM Tòa G" (có thể xuất trình CCCD/VNeID nếu được hỏi) là sẽ được cho qua ngay.',
+            landmarkId: 'loi-di-noi-bo'
+          },
+          {
+            num: 3,
+            title: 'Đi thẳng vào sảnh Tòa G (Khoa RHM)',
+            desc: 'Tòa G nằm ngay trước mặt cổng sau. Đi bộ khoảng 50m là tới thẳng sảnh tầng trệt đón tiếp bệnh nhân.',
+            landmarkId: 'toa-g',
+            highlight: true
+          }
+        ]
+      }
+    };
+
+    let currentTab = 'motorbike';
+    let mapScale = 1;
+    let mapTranslateX = 0;
+    let mapTranslateY = 0;
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let isFullscreen = false;
+
+    const mapContainer = document.getElementById('mapContainer');
+    const mapCard = document.getElementById('mapCard');
+    const mapSvg = document.getElementById('mapSvg');
+
+    function clampPan() {
+      // Giới hạn kéo map không cho trôi đi quá xa khỏi khung nhìn
+      const maxPanX = Math.max(80, (mapScale - 0.7) * 380 + 120);
+      const maxPanY = Math.max(60, (mapScale - 0.7) * 260 + 100);
+      mapTranslateX = Math.min(Math.max(mapTranslateX, -maxPanX), maxPanX);
+      mapTranslateY = Math.min(Math.max(mapTranslateY, -maxPanY), maxPanY);
+    }
+
+    function updateTransform() {
+      clampPan();
+      mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
+    }
+
+    function zoomMap(factor) {
+      mapScale = Math.min(Math.max(mapScale * factor, 0.6), 4.5);
+      updateTransform();
+    }
+
+    function resetMapView() {
+      mapScale = 1;
+      mapTranslateX = 0;
+      mapTranslateY = 0;
+      updateTransform();
+    }
+
+    function focusToaG() {
+      mapScale = 1.6;
+      mapTranslateX = -40;
+      mapTranslateY = -110;
+      updateTransform();
+      openLandmarkModal('toa-g');
+    }
+
+    // TÍNH NĂNG MỞ RỘNG BẢN ĐỒ TOÀN MÀN HÌNH (FULLSCREEN MODE)
+    function toggleFullscreenMap() {
+      isFullscreen = !isFullscreen;
+      const fsIcon = document.getElementById('fullscreenIcon');
+      const fsText = document.getElementById('fullscreenText');
+
+      if (isFullscreen) {
+        mapCard.classList.add('map-fullscreen');
+        mapContainer.style.height = 'calc(100vh - 54px)';
+        fsIcon.textContent = '✕';
+        fsText.textContent = 'Thu nhỏ';
+        document.body.style.overflow = 'hidden';
+      } else {
+        mapCard.classList.remove('map-fullscreen');
+        mapContainer.style.height = '';
+        fsIcon.textContent = '⛶';
+        fsText.textContent = 'Mở rộng map';
+        document.body.style.overflow = '';
+      }
+      resetMapView();
+    }
+
+    // Nhấp đúp (Double click / Double tap) để phóng to ngay vị trí bấm
+    mapContainer.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      zoomMap(1.4);
+    });
+
+    // Xử lý kéo rê chuột
+    mapContainer.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      dragStartX = e.clientX - mapTranslateX;
+      dragStartY = e.clientY - mapTranslateY;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      mapTranslateX = e.clientX - dragStartX;
+      mapTranslateY = e.clientY - dragStartY;
+      clampPan();
+      dragStartX = e.clientX - mapTranslateX;
+      dragStartY = e.clientY - mapTranslateY;
+      mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Cuộn chuột zoom
+    mapContainer.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const factor = e.deltaY < 0 ? 1.15 : 0.88;
+      zoomMap(factor);
+    }, { passive: false });
+
+    // Touch Pinch-to-zoom & Pan
+    let touchStartDist = null;
+    let touchStartScale = 1;
+
+    mapContainer.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        dragStartX = e.touches[0].clientX - mapTranslateX;
+        dragStartY = e.touches[0].clientY - mapTranslateY;
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        touchStartDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        touchStartScale = mapScale;
+      }
+    });
+
+    mapContainer.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging) {
+        mapTranslateX = e.touches[0].clientX - dragStartX;
+        mapTranslateY = e.touches[0].clientY - dragStartY;
+        clampPan();
+        dragStartX = e.touches[0].clientX - mapTranslateX;
+        dragStartY = e.touches[0].clientY - mapTranslateY;
+        mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
+      } else if (e.touches.length === 2 && touchStartDist) {
+        const curDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        mapScale = Math.min(Math.max(touchStartScale * (curDist / touchStartDist), 0.6), 4.5);
+        updateTransform();
+      }
+    }, { passive: true });
+
+    mapContainer.addEventListener('touchend', () => {
+      isDragging = false;
+      touchStartDist = null;
+    });
+
+    // Chuyển Tab phương tiện
+    function switchTab(tabKey) {
+      if (!ROUTES_DATA[tabKey]) return;
+      currentTab = tabKey;
+
+      const tabIds = ['motorbike', 'car', 'grab'];
+      tabIds.forEach(key => {
+        const btn = document.getElementById(key === 'motorbike' ? 'tabMotorbike' : key === 'car' ? 'tabCar' : 'tabGrab');
+        if (key === tabKey) {
+          btn.className = 'tab-btn flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 active:scale-95 bg-vlu-red text-white shadow-md border border-red-500';
+        } else {
+          btn.className = 'tab-btn flex flex-col sm:flex-row items-center justify-center gap-1.5 sm:gap-2 py-2.5 px-2 rounded-xl font-bold text-sm sm:text-base transition-all duration-200 active:scale-95 text-slate-700 hover:bg-slate-200/70';
+        }
+      });
+
+      // Bật/tắt đường đi SVG
+      document.getElementById('route-motorbike').style.display = (tabKey === 'motorbike') ? 'inline' : 'none';
+      document.getElementById('route-car').style.display = (tabKey === 'car') ? 'inline' : 'none';
+      document.getElementById('route-grab').style.display = (tabKey === 'grab') ? 'inline' : 'none';
+
+      // Cập nhật thông tin thẻ
+      const data = ROUTES_DATA[tabKey];
+      document.getElementById('routeBadge').textContent = data.badge;
+      document.getElementById('routeTitle').textContent = data.title;
+      
+      const alertBox = document.getElementById('quickGuideAlert');
+      alertBox.innerHTML = data.quickGuide;
+      if (tabKey === 'grab') {
+        alertBox.className = 'bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r-xl mb-4 text-slate-800 text-sm sm:text-base leading-relaxed';
+      } else {
+        alertBox.className = 'bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-xl mb-4 text-slate-800 text-sm sm:text-base leading-relaxed';
+      }
+
+      document.getElementById('btnGoogleMaps').href = data.gmapsUrl;
+      document.getElementById('btnGoogleMapsText').textContent = data.gmapsBtnText;
+
+      const stepListEl = document.getElementById('stepList');
+      stepListEl.innerHTML = data.steps.map(step => `
+        <div class="flex items-start gap-3 p-3 rounded-xl ${step.highlight ? 'bg-red-50/80 border border-red-200' : 'hover:bg-slate-50 border border-transparent'} transition-all cursor-pointer" onclick="openLandmarkModal('${step.landmarkId}')">
+          <div class="w-8 h-8 rounded-full ${step.highlight ? 'bg-vlu-red' : step.num === 1 ? 'bg-vlu-navy' : 'bg-blue-600'} text-white font-bold flex items-center justify-center flex-shrink-0 text-sm shadow">${step.num}</div>
+          <div class="flex-1">
+            <h3 class="font-bold ${step.highlight ? 'text-vlu-red' : 'text-slate-900'} text-base">${step.title}</h3>
+            <p class="text-slate-600 text-sm mt-0.5">${step.desc}</p>
+          </div>
+          <span class="text-xs text-slate-400 self-center">Chi tiết ➔</span>
+        </div>
+      `).join('');
+
+      if (tabKey === 'grab') {
+        mapScale = 1.3;
+        mapTranslateX = 0;
+        mapTranslateY = -90;
+        updateTransform();
+      } else {
+        resetMapView();
+      }
+    }
+
+    // Modal chi tiết điểm mốc
+    function openLandmarkModal(landmarkId) {
+      const data = (window.LANDMARKS_CONFIG && window.LANDMARKS_CONFIG[landmarkId]) ? window.LANDMARKS_CONFIG[landmarkId] : null;
+      if (!data) return;
+
+      document.getElementById('modalBadge').textContent = data.badge;
+      document.getElementById('modalBadge').style.backgroundColor = (data.badgeColor || '#C8102E') + '20';
+      document.getElementById('modalBadge').style.color = data.badgeColor || '#C8102E';
+      document.getElementById('modalTitle').textContent = data.name;
+      document.getElementById('modalTagline').textContent = data.tagline;
+      document.getElementById('modalDesc').textContent = data.description;
+      document.getElementById('modalFloor').textContent = data.floorGuide || 'Đang cập nhật phân luồng cụ thể.';
+      document.getElementById('modalTips').textContent = data.patientTips || 'Vui lòng liên hệ nhân viên hướng dẫn tại sảnh nếu cần hỗ trợ.';
+      
+      const imgEl = document.getElementById('modalImage');
+      const placeholderEl = document.getElementById('modalPlaceholder');
+      const captionEl = document.getElementById('modalImageCaption');
+
+      if (data.imageUrl && data.imageUrl.trim() !== '') {
+        imgEl.src = data.imageUrl;
+        imgEl.classList.remove('hidden');
+        placeholderEl.classList.add('hidden');
+      } else {
+        imgEl.src = '';
+        imgEl.classList.add('hidden');
+        placeholderEl.classList.remove('hidden');
+        captionEl.textContent = data.imageCaption || 'Vị trí điểm mốc thực tế tại khuôn viên';
+      }
+
+      const gmapsBtn = document.getElementById('modalGmapsBtn');
+      if (data.googleMapsUrl) {
+        gmapsBtn.href = data.googleMapsUrl;
+        gmapsBtn.classList.remove('hidden');
+      } else {
+        gmapsBtn.classList.add('hidden');
+      }
+
+      const modal = document.getElementById('landmarkModal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLandmarkModal() {
+      const modal = document.getElementById('landmarkModal');
+      modal.classList.add('hidden');
+      if (!isFullscreen) {
+        document.body.style.overflow = '';
+      }
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (!document.getElementById('landmarkModal').classList.contains('hidden')) {
+          closeLandmarkModal();
+        } else if (isFullscreen) {
+          toggleFullscreenMap();
+        }
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      switchTab('motorbike');
+    });
+  </script>
+</body>
+</html>
