@@ -458,9 +458,12 @@ if (typeof window !== 'undefined') {
           <button onclick="zoomMap(0.77)" class="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold shadow-sm active:scale-95 text-base" title="Thu nhỏ">-</button>
           
           <!-- Đặt lại góc nhìn -->
-          <button onclick="resetMapView()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center gap-1 text-slate-800 font-semibold shadow-sm active:scale-95 text-xs sm:text-sm" title="Đặt lại góc nhìn">
-            <span>🎯</span>
-            <span class="hidden sm:inline">Đặt lại</span>
+          <button onclick="resetMapView()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 text-slate-700 hover:text-slate-900 font-semibold shadow-sm active:scale-95 text-xs sm:text-sm transition-colors" title="Đặt lại góc nhìn">
+            <svg class="w-3.5 h-3.5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+              <path d="M3 3v5h5"/>
+            </svg>
+            <span>Đặt lại</span>
           </button>
 
           <!-- NÚT PHÓNG TO TOÀN MÀN HÌNH (MỞ RỘNG BẢN ĐỒ) -->
@@ -904,8 +907,15 @@ if (typeof window !== 'undefined') {
           <h2 id="routeTitle" class="text-lg sm:text-xl font-bold text-vlu-navy mt-1">Hướng Dẫn Đi Xe Máy Vào Khám Bệnh</h2>
         </div>
 
-        <button onclick="focusToaG()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-vlu-red font-bold text-xs sm:text-sm rounded-xl border border-red-200 flex items-center gap-1 transition-all active:scale-95 flex-shrink-0">
-          <span>🎯</span>
+        <button onclick="focusToaG()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-vlu-red font-bold text-xs sm:text-sm rounded-xl border border-red-200 flex items-center gap-1.5 transition-all active:scale-95 flex-shrink-0" title="Định vị Tòa G trên bản đồ">
+          <svg class="w-4 h-4 text-vlu-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <circle cx="12" cy="12" r="3"/>
+            <line x1="12" y1="2" x2="12" y2="5"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+            <line x1="2" y1="12" x2="5" y2="12"/>
+            <line x1="19" y1="12" x2="22" y2="12"/>
+          </svg>
           <span>Tìm Tòa G</span>
         </button>
       </div>
