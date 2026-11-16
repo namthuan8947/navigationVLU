@@ -86,6 +86,29 @@
       user-select: none;
     }
 
+    /* Hiệu ứng hào quang nhịp thở (Pulse Glow) quanh Tòa G để báo hiệu tương tác */
+    @keyframes toaGPulse {
+      0% {
+        stroke-opacity: 0.95;
+        stroke-width: 2.5px;
+        filter: drop-shadow(0 0 3px rgba(220, 38, 38, 0.45));
+      }
+      50% {
+        stroke-opacity: 0.25;
+        stroke-width: 6.5px;
+        filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.75));
+      }
+      100% {
+        stroke-opacity: 0.95;
+        stroke-width: 2.5px;
+        filter: drop-shadow(0 0 3px rgba(220, 38, 38, 0.45));
+      }
+    }
+    .pulse-halo {
+      animation: toaGPulse 2s infinite ease-in-out;
+      pointer-events: none;
+    }
+
     #mapContainer {
       touch-action: none;
       user-select: none;
@@ -818,13 +841,17 @@ if (typeof window !== 'undefined') {
             <text x="362.5" y="453" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">HỒ BƠI</text>
           </g>
 
-          <!-- TÒA G -> ĐÍCH ĐẾN: KHOA RĂNG HÀM MẶT (LẦU 12) - ĐÃ BỎ Ô VUÔNG LƯỚT LƯỚT GÂY RỐI MẮT -->
+          <!-- TÒA G -> ĐÍCH ĐẾN: KHOA RĂNG HÀM MẶT (LẦU 12) -->
           <g id="node-toa-g" class="interactive-element" onclick="openLandmarkModal('toa-g')">
+            <!-- Vòng hào quang phát xung nhịp thở (Pulse Glow) thu hút bấm xem -->
+            <rect class="pulse-halo" x="412" y="414" width="161" height="76" rx="14" fill="none" stroke="#DC2626" />
+
             <!-- Khối Tòa G viền đỏ VLU nổi bật -->
             <rect x="417" y="419" width="151" height="66" rx="10" fill="#F28585" stroke="#C8102E" stroke-width="3" filter="url(#buildingShadow)" />
             
-            <!-- Chữ TOÀ G nguyên bản ở chính giữa khối -->
-            <text x="492.5" y="458" fill="#FFFFFF" font-size="19" font-weight="900" text-anchor="middle">TOÀ G</text>
+            <!-- Chữ TOÀ G & Gợi ý chạm xem ảnh -->
+            <text x="492.5" y="451" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">TOÀ G</text>
+            <text x="492.5" y="470" fill="#FFF1F2" font-size="8.5" font-weight="800" text-anchor="middle" letter-spacing="0.5">👆 CHẠM ĐỂ XEM ẢNH</text>
 
             <!-- BẢNG GHIM ĐÍCH ĐẾN ĐẶT PHÍA TRÊN KHỐI TÒA G (Y=388, RÕ RÀNG LẦU 12) -->
             <g transform="translate(492.5, 388)">
@@ -912,7 +939,7 @@ if (typeof window !== 'undefined') {
 
           <!-- 6. BẢNG CHÚ THÍCH (ĐẶT Ở GÓC TRÊN BÊN PHẢI x=795, y=65 - HOÀN TOÀN KHÔNG CHE MAP) -->
           <g transform="translate(795, 65)" class="select-none">
-            <rect x="0" y="0" width="185" height="92" rx="10" fill="#FFFFFF" fill-opacity="0.96" stroke="#CBD5E1" stroke-width="1.2" filter="url(#buildingShadow)" />
+            <rect x="0" y="0" width="185" height="116" rx="10" fill="#FFFFFF" fill-opacity="0.96" stroke="#CBD5E1" stroke-width="1.2" filter="url(#buildingShadow)" />
             <text x="92.5" y="19" fill="#1E293B" font-size="10.5" font-weight="900" text-anchor="middle">CHÚ THÍCH</text>
             
             <line x1="16" y1="36" x2="52" y2="36" stroke="#1D4ED8" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowBlue)" />
@@ -923,6 +950,14 @@ if (typeof window !== 'undefined') {
 
             <line x1="16" y1="76" x2="52" y2="76" stroke="#16A34A" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowRouteWalk)" />
             <text x="62" y="80" fill="#16A34A" font-size="9" font-weight="800">LỘ TRÌNH CỦA BẠN</text>
+
+            <!-- Gạch phân cách & Hướng dẫn bấm khối -->
+            <line x1="14" y1="92" x2="171" y2="92" stroke="#E2E8F0" stroke-width="1" />
+            <g transform="translate(16, 105)">
+              <circle cx="6" cy="-2.5" r="7.5" fill="#DC2626" fill-opacity="0.12" />
+              <text x="6" y="0.5" font-size="9" text-anchor="middle">👆</text>
+              <text x="18" y="0.5" fill="#DC2626" font-size="8.5" font-weight="900">BẤM KHỐI: XEM ẢNH & TIỆN ÍCH</text>
+            </g>
           </g>
 
           <!-- 7. TUYẾN ĐƯỜNG CHỈ DẪN DẪN ĐỘNG THEO 3 TAB (DASH THƯ THÁI, CHẠY CHẬM RÕ NÉT) -->
