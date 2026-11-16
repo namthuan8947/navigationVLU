@@ -1395,20 +1395,48 @@ if (typeof window !== 'undefined') {
     const mapCard = document.getElementById('mapCard');
     const mapSvg = document.getElementById('mapSvg');
 
+    const MIN_SCALE = 0.8;
+    const MAX_SCALE = 4.5;
+
     function clampPan() {
-      // Khi ở kích thước gốc hoặc nhỏ hơn, giữ map cố định ở tâm
-      if (mapScale <= 1.0) {
-        mapTranslateX = 0;
-        mapTranslateY = 0;
-        return;
-      }
-      // Giới hạn kéo map không cho trôi đi quá xa khỏi khung nhìn khi đã zoom in
       const cw = mapContainer.clientWidth || 750;
       const ch = mapContainer.clientHeight || 530;
-      const maxPanX = Math.max(120, cw * (mapScale - 0.4));
-      const maxPanY = Math.max(100, ch * (mapScale - 0.4));
-      mapTranslateX = Math.min(Math.max(mapTranslateX, -maxPanX), maxPanX);
-      mapTranslateY = Math.min(Math.max(mapTranslateY, -maxPanY), maxPanY);
+      const baseScale = Math.min(cw / 1000, ch / 650);
+      const baseW = 1000 * baseScale;
+      const baseH = 650 * baseScale;
+      const offsetX = (cw - baseW) / 2;
+      const offsetY = (ch - baseH) / 2;
+      
+      const scaledW = baseW * mapScale;
+      const scaledH = baseH * mapScale;
+      
+      // Giới hạn biên độ kéo/lướt không vượt quá mép khuôn viên (+ đệm đàn hồi 25px)
+      const pad = 25;
+      
+      let minX, maxX, minY, maxY;
+      
+      if (scaledW <= cw) {
+        // Bản đồ vừa hoặc nhỏ hơn khung nhìn: cố định tâm, chỉ cho phép dao động đàn hồi nhẹ
+        const centerTx = (cw - scaledW) / 2 - offsetX * mapScale;
+        minX = centerTx - pad;
+        maxX = centerTx + pad;
+      } else {
+        // Bản đồ lớn hơn khung nhìn: cho phép lướt mép này sang mép kia, không lướt quá bờ cõi
+        minX = cw - pad - (offsetX + baseW) * mapScale;
+        maxX = pad - offsetX * mapScale;
+      }
+      
+      if (scaledH <= ch) {
+        const centerTy = (ch - scaledH) / 2 - offsetY * mapScale;
+        minY = centerTy - pad;
+        maxY = centerTy + pad;
+      } else {
+        minY = ch - pad - (offsetY + baseH) * mapScale;
+        maxY = pad - offsetY * mapScale;
+      }
+      
+      mapTranslateX = Math.min(Math.max(mapTranslateX, minX), maxX);
+      mapTranslateY = Math.min(Math.max(mapTranslateY, minY), maxY);
     }
 
     function updateTransform() {
@@ -1418,7 +1446,7 @@ if (typeof window !== 'undefined') {
       // Cập nhật trạng thái nút thu nhỏ (-)
       const zoomOutBtn = document.getElementById('zoomOutBtn');
       if (zoomOutBtn) {
-        if (mapScale <= 1.01) {
+        if (mapScale <= MIN_SCALE + 0.02) {
           zoomOutBtn.setAttribute('disabled', 'true');
         } else {
           zoomOutBtn.removeAttribute('disabled');
@@ -1428,12 +1456,14 @@ if (typeof window !== 'undefined') {
 
     function zoomMap(factor) {
       const targetScale = mapScale * factor;
-      // Giới hạn: Có thể phóng to (zoom in) nhưng tuyệt đối không thu nhỏ (zoom out) quá kích thước ban đầu (scale = 1.0)
-      if (targetScale <= 1.0) {
-        resetMapView();
-        return;
+      // Cho phép thu nhỏ mở rộng góc nhìn nhưng giới hạn sàn ở mức 0.8 (không thu nhỏ quá mức)
+      if (targetScale <= MIN_SCALE) {
+        mapScale = MIN_SCALE;
+      } else if (targetScale >= MAX_SCALE) {
+        mapScale = MAX_SCALE;
+      } else {
+        mapScale = targetScale;
       }
-      mapScale = Math.min(targetScale, 4.5);
       updateTransform();
     }
 
@@ -1448,16 +1478,19 @@ if (typeof window !== 'undefined') {
       const cw = mapContainer.clientWidth || 750;
       const ch = mapContainer.clientHeight || 530;
       const baseScale = Math.min(cw / 1000, ch / 650);
-      const offsetX = (cw - 1000 * baseScale) / 2;
-      const offsetY = (ch - 650 * baseScale) / 2;
-      
-      // Trọng tâm khu vực Cổng Sau Dương Quảng Hàm (x=565..885, y=570..615) & Lối đi bộ vào Tòa G (x=490..565, y=486..615)
-      const targetSvgX = 580;
-      const targetSvgY = 530;
+      const baseW = 1000 * baseScale;
+      const baseH = 650 * baseScale;
+      const offsetX = (cw - baseW) / 2;
+      const offsetY = (ch - baseH) / 2;
       
       mapScale = cw < 640 ? 1.2 : 1.25;
+      
+      // Căn giữa Cổng Sau & Tòa G theo phương ngang
+      const targetSvgX = 600;
       mapTranslateX = (cw / 2) - (offsetX + targetSvgX * baseScale) * mapScale;
-      mapTranslateY = (ch / 2) - (offsetY + targetSvgY * baseScale) * mapScale;
+      
+      // Căn đáy bản đồ cách mép dưới 25px để hiển thị trọn vẹn Cổng Sau và ghim Grab, không để khoảng trống thừa
+      mapTranslateY = ch - 25 - (offsetY + baseH) * mapScale;
       
       updateTransform();
     }
@@ -1507,7 +1540,6 @@ if (typeof window !== 'undefined') {
 
     // Xử lý kéo rê chuột
     mapContainer.addEventListener('mousedown', (e) => {
-      if (mapScale <= 1.0) return; // Không cần kéo khi map ở kích thước mặc định ban đầu
       isDragging = true;
       dragStartX = e.clientX - mapTranslateX;
       dragStartY = e.clientY - mapTranslateY;
@@ -1540,7 +1572,6 @@ if (typeof window !== 'undefined') {
 
     mapContainer.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
-        if (mapScale <= 1.0) return; // Không cần kéo khi map ở kích thước mặc định ban đầu
         isDragging = true;
         dragStartX = e.touches[0].clientX - mapTranslateX;
         dragStartY = e.touches[0].clientY - mapTranslateY;
@@ -1568,12 +1599,8 @@ if (typeof window !== 'undefined') {
           e.touches[0].clientY - e.touches[1].clientY
         );
         const targetScale = touchStartScale * (curDist / touchStartDist);
-        if (targetScale <= 1.0) {
-          resetMapView();
-        } else {
-          mapScale = Math.min(targetScale, 4.5);
-          updateTransform();
-        }
+        mapScale = Math.min(Math.max(targetScale, MIN_SCALE), MAX_SCALE);
+        updateTransform();
       }
     }, { passive: true });
 
