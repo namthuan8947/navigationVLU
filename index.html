@@ -1397,8 +1397,10 @@ if (typeof window !== 'undefined') {
 
     function clampPan() {
       // Giới hạn kéo map không cho trôi đi quá xa khỏi khung nhìn
-      const maxPanX = Math.max(80, (mapScale - 0.7) * 380 + 120);
-      const maxPanY = Math.max(60, (mapScale - 0.7) * 260 + 100);
+      const cw = mapContainer.clientWidth || 750;
+      const ch = mapContainer.clientHeight || 530;
+      const maxPanX = Math.max(120, cw * (mapScale - 0.4));
+      const maxPanY = Math.max(100, ch * (mapScale - 0.4));
       mapTranslateX = Math.min(Math.max(mapTranslateX, -maxPanX), maxPanX);
       mapTranslateY = Math.min(Math.max(mapTranslateY, -maxPanY), maxPanY);
     }
@@ -1420,10 +1422,35 @@ if (typeof window !== 'undefined') {
       updateTransform();
     }
 
+    function focusCongSau() {
+      const cw = mapContainer.clientWidth || 750;
+      const ch = mapContainer.clientHeight || 530;
+      const baseScale = Math.min(cw / 1000, ch / 650);
+      const offsetX = (cw - 1000 * baseScale) / 2;
+      const offsetY = (ch - 650 * baseScale) / 2;
+      
+      // Trọng tâm khu vực Cổng Sau Dương Quảng Hàm (x=565..885, y=570..615) & Lối đi bộ vào Tòa G (x=490..565, y=486..615)
+      const targetSvgX = 580;
+      const targetSvgY = 530;
+      
+      mapScale = cw < 640 ? 1.2 : 1.25;
+      mapTranslateX = (cw / 2) - (offsetX + targetSvgX * baseScale) * mapScale;
+      mapTranslateY = (ch / 2) - (offsetY + targetSvgY * baseScale) * mapScale;
+      
+      updateTransform();
+    }
+
     function focusToaG() {
-      mapScale = 1.6;
-      mapTranslateX = -40;
-      mapTranslateY = -110;
+      const cw = mapContainer.clientWidth || 750;
+      const ch = mapContainer.clientHeight || 530;
+      const baseScale = Math.min(cw / 1000, ch / 650);
+      const offsetX = (cw - 1000 * baseScale) / 2;
+      const offsetY = (ch - 650 * baseScale) / 2;
+      
+      mapScale = cw < 640 ? 1.4 : 1.5;
+      mapTranslateX = (cw / 2) - (offsetX + 490 * baseScale) * mapScale;
+      mapTranslateY = (ch / 2) - (offsetY + 450 * baseScale) * mapScale;
+      
       updateTransform();
       openLandmarkModal('toa-g');
     }
@@ -1575,10 +1602,7 @@ if (typeof window !== 'undefined') {
       `).join('');
 
       if (tabKey === 'grab') {
-        mapScale = 1.3;
-        mapTranslateX = 0;
-        mapTranslateY = -90;
-        updateTransform();
+        focusCongSau();
       } else {
         resetMapView();
       }
