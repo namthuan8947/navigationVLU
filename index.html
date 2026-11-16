@@ -243,11 +243,21 @@ var LANDMARKS_CONFIG = {
     badge: "TÒA NHÀ HÀNH CHÍNH & HỘI TRƯỜNG",
     badgeColor: "#DC2626",
     tagline: "Khối nhà lớn trung tâm phía Bắc",
-    description: "Tòa A là khối nhà nổi bật ở trung tâm khuôn viên, nơi đặt các hội trường lớn (Hội trường Trịnh Công Sơn), thư viện, căn tin và khối văn phòng.",
+    description: "Tòa A là khối nhà nổi bật ở trung tâm khuôn viên, nơi đặt các hội trường lớn (Hội trường Trịnh Công Sơn), thư viện (Smart Library), căn tin, khu HUB sinh hoạt và khối văn phòng.",
     floorGuide: "Khối nhà nhiều tầng đối diện Cổng chính Đặng Thùy Trâm.",
     patientTips: "Dành cho bệnh nhân đi xe ô tô gửi tại hầm Tòa A hoặc cần liên hệ công tác hành chính.",
-    imageUrl: "images/toa-a.jpg",
-    imageCaption: "Toàn cảnh Tòa A, Hội trường Trịnh Công Sơn, Thư viện & Căn tin",
+    images: [
+      {
+        url: "images/toa-a-cong-chinh.jpg",
+        caption: "Mặt tiền Tòa A nhìn từ Cổng chính (Smart Library, HUB, Đồi Danh Vọng)"
+      },
+      {
+        url: "images/toa-a.jpg",
+        caption: "Toàn cảnh Tòa A, Hội trường Trịnh Công Sơn, Thư viện & Căn tin"
+      }
+    ],
+    imageUrl: "images/toa-a-cong-chinh.jpg",
+    imageCaption: "Mặt tiền Tòa A nhìn từ Cổng chính (Smart Library, HUB, Đồi Danh Vọng)",
     googleMapsUrl: "",
     coords: { x: 540, y: 185 }
   },
@@ -1112,17 +1122,34 @@ if (typeof window !== 'undefined') {
 
       <div class="p-5 overflow-y-auto space-y-4">
         
-        <div id="modalImageContainer" class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner flex flex-col items-center justify-center text-center">
-          <img id="modalImage" src="" alt="Hình ảnh thực tế" class="absolute inset-0 w-full h-full object-cover hidden">
+        <div id="modalImageContainer" class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner flex flex-col items-center justify-center text-center group">
+          <img id="modalImage" src="" alt="Hình ảnh thực tế" class="absolute inset-0 w-full h-full object-cover hidden transition-opacity duration-300">
+
+          <!-- Nút chuyển ảnh Prev & Next khi có nhiều ảnh -->
+          <button id="modalPrevImgBtn" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/60 hover:bg-slate-900/85 active:scale-90 text-white flex items-center justify-center backdrop-blur-sm shadow transition-all hidden z-20" onclick="prevModalImage(event)" title="Ảnh trước">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+          </button>
+          <button id="modalNextImgBtn" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-slate-900/60 hover:bg-slate-900/85 active:scale-90 text-white flex items-center justify-center backdrop-blur-sm shadow transition-all hidden z-20" onclick="nextModalImage(event)" title="Ảnh tiếp theo">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+          </button>
+
+          <!-- Chỉ số đếm ảnh (Badge 1/2) ở góc trên bên phải -->
+          <div id="modalImgCounter" class="absolute top-2.5 right-2.5 px-2.5 py-0.5 rounded-full bg-slate-900/70 backdrop-blur-sm text-[11px] font-bold text-white shadow hidden z-20">
+            1/2
+          </div>
 
           <!-- Thanh chú thích ảnh mờ bán trong suốt khi có ảnh thực tế -->
-          <div id="modalPhotoCaptionBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/85 via-slate-900/50 to-transparent p-3 pt-6 text-left hidden">
-            <p id="modalPhotoCaption" class="text-xs font-semibold text-white drop-shadow flex items-center gap-1.5">
-              <svg class="w-3.5 h-3.5 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2H4zm3 2a1 1 0 100 2 1 1 0 000-2zm-3 8l3-4 2 2 3-4 5 6H4z" clip-rule="evenodd" />
-              </svg>
-              <span></span>
-            </p>
+          <div id="modalPhotoCaptionBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/90 via-slate-900/60 to-transparent p-3 pt-6 text-left hidden z-10">
+            <div class="flex items-center justify-between gap-2">
+              <p id="modalPhotoCaption" class="text-xs font-semibold text-white drop-shadow flex items-center gap-1.5 flex-1 min-w-0">
+                <svg class="w-3.5 h-3.5 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2H4zm3 2a1 1 0 100 2 1 1 0 000-2zm-3 8l3-4 2 2 3-4 5 6H4z" clip-rule="evenodd" />
+                </svg>
+                <span class="truncate"></span>
+              </p>
+              <!-- Các dấu chấm dots biểu thị vị trí ảnh -->
+              <div id="modalImgDots" class="flex items-center gap-1.5 flex-shrink-0"></div>
+            </div>
           </div>
 
           <div id="modalPlaceholder" class="flex flex-col items-center justify-center gap-2 text-slate-500 p-4">
@@ -1483,6 +1510,65 @@ if (typeof window !== 'undefined') {
       }
     }
 
+    let currentModalImages = [];
+    let currentModalImgIndex = 0;
+
+    function renderModalImage(idx) {
+      if (!currentModalImages || currentModalImages.length === 0) return;
+      currentModalImgIndex = (idx + currentModalImages.length) % currentModalImages.length;
+      const item = currentModalImages[currentModalImgIndex];
+      const imgEl = document.getElementById('modalImage');
+      const photoCaptionBar = document.getElementById('modalPhotoCaptionBar');
+      const photoCaptionText = photoCaptionBar ? photoCaptionBar.querySelector('span') : null;
+      const counterEl = document.getElementById('modalImgCounter');
+      const dotsEl = document.getElementById('modalImgDots');
+      const prevBtn = document.getElementById('modalPrevImgBtn');
+      const nextBtn = document.getElementById('modalNextImgBtn');
+
+      let url = item.url || item;
+      if (!url.startsWith('http') && !url.startsWith('data:')) {
+        if (window.location.hostname.includes('google') || window.location.protocol === 'blob:') {
+          url = 'https://namthuan8947.github.io/navigationVLU/' + url.replace(/^\//, '');
+        }
+      }
+
+      imgEl.src = url;
+      imgEl.classList.remove('hidden');
+
+      if (photoCaptionText) {
+        photoCaptionText.textContent = item.caption || 'Hình ảnh thực tế';
+      }
+
+      if (currentModalImages.length > 1) {
+        if (counterEl) {
+          counterEl.textContent = `${currentModalImgIndex + 1}/${currentModalImages.length}`;
+          counterEl.classList.remove('hidden');
+        }
+        if (prevBtn) prevBtn.classList.remove('hidden');
+        if (nextBtn) nextBtn.classList.remove('hidden');
+        if (dotsEl) {
+          dotsEl.innerHTML = currentModalImages.map((_, i) => 
+            `<button type="button" onclick="renderModalImage(${i}); event.stopPropagation();" class="h-1.5 rounded-full transition-all ${i === currentModalImgIndex ? 'bg-white w-4' : 'bg-white/50 hover:bg-white/80 w-1.5'}" title="Xem ảnh ${i+1}"></button>`
+          ).join('');
+        }
+      } else {
+        if (counterEl) counterEl.classList.add('hidden');
+        if (prevBtn) prevBtn.classList.add('hidden');
+        if (nextBtn) nextBtn.classList.add('hidden');
+        if (dotsEl) dotsEl.innerHTML = '';
+      }
+    }
+
+    function prevModalImage(e) {
+      if (e) e.stopPropagation();
+      renderModalImage(currentModalImgIndex - 1);
+    }
+
+    function nextModalImage(e) {
+      if (e) e.stopPropagation();
+      renderModalImage(currentModalImgIndex + 1);
+    }
+
     // Modal chi tiết điểm mốc
     function openLandmarkModal(landmarkId) {
       const data = (window.LANDMARKS_CONFIG && window.LANDMARKS_CONFIG[landmarkId]) ? window.LANDMARKS_CONFIG[landmarkId] : null;
@@ -1501,29 +1587,30 @@ if (typeof window !== 'undefined') {
       const placeholderEl = document.getElementById('modalPlaceholder');
       const captionEl = document.getElementById('modalImageCaption');
       const photoCaptionBar = document.getElementById('modalPhotoCaptionBar');
-      const photoCaptionText = photoCaptionBar ? photoCaptionBar.querySelector('span') : null;
 
-      if (data.imageUrl && data.imageUrl.trim() !== '') {
-        let finalUrl = data.imageUrl.trim();
-        if (!finalUrl.startsWith('http') && !finalUrl.startsWith('data:')) {
-          if (window.location.hostname.includes('google') || window.location.protocol === 'blob:') {
-            finalUrl = 'https://namthuan8947.github.io/navigationVLU/' + finalUrl.replace(/^\//, '');
-          }
-        }
-        imgEl.src = finalUrl;
-        imgEl.classList.remove('hidden');
+      // Chuẩn bị danh sách ảnh (hỗ trợ cả mảng images hoặc 1 ảnh imageUrl)
+      currentModalImages = [];
+      if (data.images && Array.isArray(data.images) && data.images.length > 0) {
+        currentModalImages = data.images;
+      } else if (data.imageUrl && data.imageUrl.trim() !== '') {
+        currentModalImages = [{ url: data.imageUrl.trim(), caption: data.imageCaption || data.name }];
+      }
+
+      if (currentModalImages.length > 0) {
         placeholderEl.classList.add('hidden');
-        if (photoCaptionBar && photoCaptionText) {
-          photoCaptionText.textContent = data.imageCaption || data.name;
-          photoCaptionBar.classList.remove('hidden');
-        }
+        if (photoCaptionBar) photoCaptionBar.classList.remove('hidden');
+        renderModalImage(0);
       } else {
         imgEl.src = '';
         imgEl.classList.add('hidden');
         placeholderEl.classList.remove('hidden');
-        if (photoCaptionBar) {
-          photoCaptionBar.classList.add('hidden');
-        }
+        if (photoCaptionBar) photoCaptionBar.classList.add('hidden');
+        const counterEl = document.getElementById('modalImgCounter');
+        const prevBtn = document.getElementById('modalPrevImgBtn');
+        const nextBtn = document.getElementById('modalNextImgBtn');
+        if (counterEl) counterEl.classList.add('hidden');
+        if (prevBtn) prevBtn.classList.add('hidden');
+        if (nextBtn) nextBtn.classList.add('hidden');
         if (captionEl) {
           captionEl.textContent = data.imageCaption || 'Vị trí điểm mốc thực tế tại khuôn viên';
         }
