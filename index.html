@@ -768,30 +768,58 @@ if (typeof window !== 'undefined') {
 
           <!-- 5. 3 CỔNG RA VÀO (Đặt đúng vị trí ngoài rìa bản đồ, chữ KHÔNG che đường đi) -->
 
-          <!-- CỔNG CHÍNH ĐẶNG THÙY TRÂM (Chữ đặt lệch sang trái x=470, không che lòng đường x=500) -->
+          <!-- 5. 3 CỔNG RA VÀO (Nút bấm lớn trực quan, dễ chạm, có ghim vị trí & hiệu ứng tương tác) -->
+
+          <!-- CỔNG CHÍNH ĐẶNG THÙY TRÂM (Phía Bắc khuôn viên) -->
           <g id="node-cong-chinh" class="interactive-element" onclick="openLandmarkModal('cong-chinh')">
-            <g transform="translate(470, 24)">
-              <text x="0" y="0" fill="#DC2626" font-size="12" font-weight="900" text-anchor="end">CỔNG CHÍNH ĐẶNG THÙY TRÂM</text>
-              <text x="0" y="14" fill="#475569" font-size="8.5" font-weight="600" text-anchor="end">69/68 Đặng Thùy Trâm, P. Bình Lợi Trung, TP. HCM</text>
+            <!-- Nền nút bấm thẻ Cổng Chính bo tròn viền đỏ sang trọng, dễ chạm -->
+            <rect x="185" y="8" width="290" height="44" rx="10" fill="#FFFFFF" fill-opacity="0.98" stroke="#DC2626" stroke-width="1.8" filter="url(#buildingShadow)" />
+            <!-- Nút Pin vị trí màu đỏ nổi bật -->
+            <g transform="translate(208, 30)">
+              <circle cx="0" cy="0" r="16" fill="#DC2626" fill-opacity="0.15" />
+              <circle cx="0" cy="0" r="11" fill="#DC2626" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
+              <text x="0" y="4" font-size="11" text-anchor="middle">📍</text>
             </g>
-            <circle cx="488" cy="28" r="5" fill="#DC2626" />
+            <!-- Tên cổng & Địa chỉ -->
+            <text x="228" y="25" fill="#DC2626" font-size="11.5" font-weight="900">CỔNG CHÍNH ĐẶNG THÙY TRÂM</text>
+            <text x="228" y="39" fill="#64748B" font-size="8.5" font-weight="600">69/68 Đặng Thùy Trâm, P. Bình Lợi Trung</text>
+            <!-- Mũi tên chỉ dẫn bấm xem -->
+            <text x="462" y="34" fill="#DC2626" font-size="13" font-weight="900" text-anchor="end">➔</text>
           </g>
 
-          <!-- CỔNG SAU DƯƠNG QUẢNG HÀM (Nằm giữa Tòa G và Tòa F, chữ đặt lệch sang trái không che đường nhánh) -->
+          <!-- CỔNG SAU DƯƠNG QUẢNG HÀM (Phía Nam khuôn viên) -->
           <g id="node-cong-sau" class="interactive-element" onclick="openLandmarkModal('cong-sau')">
-            <g transform="translate(542, 590)">
-              <text x="0" y="0" fill="#DC2626" font-size="12" font-weight="900" text-anchor="end">CỔNG SAU DƯƠNG QUẢNG HÀM</text>
-              <text x="0" y="14" fill="#475569" font-size="8.5" font-weight="600" text-anchor="end">80/68 Dương Quảng Hàm, P. An Nhơn, TP. HCM</text>
+            <!-- Nền nút bấm thẻ Cổng Sau bo tròn viền đỏ sang trọng, dễ chạm -->
+            <rect x="235" y="570" width="290" height="44" rx="10" fill="#FFFFFF" fill-opacity="0.98" stroke="#DC2626" stroke-width="1.8" filter="url(#buildingShadow)" />
+            <!-- Nút Pin vị trí màu đỏ nổi bật -->
+            <g transform="translate(258, 592)">
+              <circle cx="0" cy="0" r="16" fill="#DC2626" fill-opacity="0.15" />
+              <circle cx="0" cy="0" r="11" fill="#DC2626" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
+              <text x="0" y="4" font-size="11" text-anchor="middle">📍</text>
             </g>
-            <circle cx="550" cy="590" r="5" fill="#DC2626" />
+            <!-- Tên cổng & Địa chỉ -->
+            <text x="278" y="587" fill="#DC2626" font-size="11.5" font-weight="900">CỔNG SAU DƯƠNG QUẢNG HÀM</text>
+            <text x="278" y="601" fill="#64748B" font-size="8.5" font-weight="600">80/68 Dương Quảng Hàm, P. An Nhơn</text>
+            <!-- Mũi tên chỉ dẫn bấm xem -->
+            <text x="512" y="596" fill="#DC2626" font-size="13" font-weight="900" text-anchor="end">➔</text>
           </g>
 
-          <!-- CỔNG SAU PHỤ DƯƠNG QUẢNG HÀM (Góc dưới bên trái, đặt dưới đường nhánh x=120) -->
+          <!-- CỔNG SAU PHỤ DƯƠNG QUẢNG HÀM (Hẻm 566 Nguyễn Thái Sơn) -->
           <g id="node-cong-phu" class="interactive-element" onclick="openLandmarkModal('cong-phu')">
-            <circle cx="120" cy="545" r="5" fill="#DC2626" />
-            <text x="120" y="576" fill="#DC2626" font-size="11" font-weight="900" text-anchor="middle">CỔNG SAU PHỤ DƯƠNG QUẢNG HÀM</text>
-            <text x="120" y="590" fill="#475569" font-size="8.5" font-weight="600" text-anchor="middle">Hẻm 566 Nguyễn Thái Sơn, Phường An Nhơn, Tp. HCM</text>
-            <text x="120" y="602" fill="#EA580C" font-size="8" font-weight="700" text-anchor="middle">(Mở cửa từ Thứ 2 - Thứ 7 và đóng lúc 19h)</text>
+            <!-- Nền nút bấm thẻ Cổng Phụ bo tròn viền đỏ sang trọng, dễ chạm -->
+            <rect x="10" y="540" width="220" height="68" rx="10" fill="#FFFFFF" fill-opacity="0.98" stroke="#DC2626" stroke-width="1.8" filter="url(#buildingShadow)" />
+            <!-- Nút Pin vị trí màu đỏ nổi bật -->
+            <g transform="translate(30, 564)">
+              <circle cx="0" cy="0" r="15" fill="#DC2626" fill-opacity="0.15" />
+              <circle cx="0" cy="0" r="10.5" fill="#DC2626" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
+              <text x="0" y="3.5" font-size="10" text-anchor="middle">📍</text>
+            </g>
+            <!-- Tên cổng & Địa chỉ -->
+            <text x="48" y="560" fill="#DC2626" font-size="11" font-weight="900">CỔNG SAU PHỤ (HẺM 566)</text>
+            <text x="48" y="574" fill="#64748B" font-size="8.5" font-weight="600">566 Nguyễn Thái Sơn, P. An Nhơn</text>
+            <text x="18" y="596" fill="#EA580C" font-size="8" font-weight="700">⏱ Mở Thứ 2 - Thứ 7 (Đóng lúc 19h)</text>
+            <!-- Mũi tên chỉ dẫn bấm xem -->
+            <text x="218" y="565" fill="#DC2626" font-size="12" font-weight="900" text-anchor="end">➔</text>
           </g>
 
           <!-- 6. BẢNG CHÚ THÍCH (ĐẶT Ở GÓC TRÊN BÊN PHẢI x=795, y=65 - HOÀN TOÀN KHÔNG CHE MAP) -->
