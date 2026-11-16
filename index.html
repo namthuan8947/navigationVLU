@@ -276,8 +276,8 @@ var LANDMARKS_CONFIG = {
     description: "Tòa K hình trụ tròn độc đáo, là biểu tượng kiến trúc nổi bật ngay giữa trung tâm khuôn viên trường Văn Lang.",
     floorGuide: "Khu vực dịch vụ, thư viện và không gian sinh hoạt chung.",
     patientTips: "Mốc định hướng rất dễ nhận biết từ xa vì là tòa nhà hình tròn duy nhất.",
-    imageUrl: "",
-    imageCaption: "Khối kiến trúc tròn đặc sắc của Tòa K",
+    imageUrl: "images/toa-k.jpg",
+    imageCaption: "Toàn cảnh kiến trúc Tòa K (Tòa Tròn trung tâm VLU)",
     googleMapsUrl: "",
     coords: { x: 535, y: 310 }
   },
@@ -1112,10 +1112,20 @@ if (typeof window !== 'undefined') {
 
       <div class="p-5 overflow-y-auto space-y-4">
         
-        <div class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-center p-4">
+        <div id="modalImageContainer" class="relative w-full aspect-video rounded-2xl overflow-hidden bg-slate-100 border border-slate-200 shadow-inner flex flex-col items-center justify-center text-center">
           <img id="modalImage" src="" alt="Hình ảnh thực tế" class="absolute inset-0 w-full h-full object-cover hidden">
 
-          <div id="modalPlaceholder" class="flex flex-col items-center justify-center gap-2 text-slate-500">
+          <!-- Thanh chú thích ảnh mờ bán trong suốt khi có ảnh thực tế -->
+          <div id="modalPhotoCaptionBar" class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-slate-900/85 via-slate-900/50 to-transparent p-3 pt-6 text-left hidden">
+            <p id="modalPhotoCaption" class="text-xs font-semibold text-white drop-shadow flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-amber-300 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2H4zm3 2a1 1 0 100 2 1 1 0 000-2zm-3 8l3-4 2 2 3-4 5 6H4z" clip-rule="evenodd" />
+              </svg>
+              <span></span>
+            </p>
+          </div>
+
+          <div id="modalPlaceholder" class="flex flex-col items-center justify-center gap-2 text-slate-500 p-4">
             <div class="w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center text-slate-600">
               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
@@ -1490,16 +1500,33 @@ if (typeof window !== 'undefined') {
       const imgEl = document.getElementById('modalImage');
       const placeholderEl = document.getElementById('modalPlaceholder');
       const captionEl = document.getElementById('modalImageCaption');
+      const photoCaptionBar = document.getElementById('modalPhotoCaptionBar');
+      const photoCaptionText = photoCaptionBar ? photoCaptionBar.querySelector('span') : null;
 
       if (data.imageUrl && data.imageUrl.trim() !== '') {
-        imgEl.src = data.imageUrl;
+        let finalUrl = data.imageUrl.trim();
+        if (!finalUrl.startsWith('http') && !finalUrl.startsWith('data:')) {
+          if (window.location.hostname.includes('google') || window.location.protocol === 'blob:') {
+            finalUrl = 'https://namthuan8947.github.io/navigationVLU/' + finalUrl.replace(/^\//, '');
+          }
+        }
+        imgEl.src = finalUrl;
         imgEl.classList.remove('hidden');
         placeholderEl.classList.add('hidden');
+        if (photoCaptionBar && photoCaptionText) {
+          photoCaptionText.textContent = data.imageCaption || data.name;
+          photoCaptionBar.classList.remove('hidden');
+        }
       } else {
         imgEl.src = '';
         imgEl.classList.add('hidden');
         placeholderEl.classList.remove('hidden');
-        captionEl.textContent = data.imageCaption || 'Vị trí điểm mốc thực tế tại khuôn viên';
+        if (photoCaptionBar) {
+          photoCaptionBar.classList.add('hidden');
+        }
+        if (captionEl) {
+          captionEl.textContent = data.imageCaption || 'Vị trí điểm mốc thực tế tại khuôn viên';
+        }
       }
 
       const gmapsBtn = document.getElementById('modalGmapsBtn');
