@@ -545,7 +545,7 @@ if (typeof window !== 'undefined') {
         <div class="flex items-center gap-1.5 ml-auto">
           <!-- Phóng to (+) / Thu nhỏ (-) -->
           <button onclick="zoomMap(1.3)" class="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold shadow-sm active:scale-95 text-base" title="Phóng to">+</button>
-          <button onclick="zoomMap(0.77)" class="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold shadow-sm active:scale-95 text-base" title="Thu nhỏ">-</button>
+          <button id="zoomOutBtn" onclick="zoomMap(0.77)" class="w-8 h-8 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center justify-center text-slate-800 font-bold shadow-sm active:scale-95 text-base transition-opacity disabled:opacity-40 disabled:cursor-not-allowed" title="Thu nhỏ">-</button>
           
           <!-- Đặt lại góc nhìn -->
           <button onclick="resetMapView()" class="px-2.5 py-1 rounded-lg bg-white border border-slate-300 hover:bg-slate-100 flex items-center gap-1.5 text-slate-700 hover:text-slate-900 font-semibold shadow-sm active:scale-95 text-xs sm:text-sm transition-colors" title="Đặt lại góc nhìn">
@@ -1396,7 +1396,13 @@ if (typeof window !== 'undefined') {
     const mapSvg = document.getElementById('mapSvg');
 
     function clampPan() {
-      // Giới hạn kéo map không cho trôi đi quá xa khỏi khung nhìn
+      // Khi ở kích thước gốc hoặc nhỏ hơn, giữ map cố định ở tâm
+      if (mapScale <= 1.0) {
+        mapTranslateX = 0;
+        mapTranslateY = 0;
+        return;
+      }
+      // Giới hạn kéo map không cho trôi đi quá xa khỏi khung nhìn khi đã zoom in
       const cw = mapContainer.clientWidth || 750;
       const ch = mapContainer.clientHeight || 530;
       const maxPanX = Math.max(120, cw * (mapScale - 0.4));
@@ -1408,10 +1414,26 @@ if (typeof window !== 'undefined') {
     function updateTransform() {
       clampPan();
       mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
+      
+      // Cập nhật trạng thái nút thu nhỏ (-)
+      const zoomOutBtn = document.getElementById('zoomOutBtn');
+      if (zoomOutBtn) {
+        if (mapScale <= 1.01) {
+          zoomOutBtn.setAttribute('disabled', 'true');
+        } else {
+          zoomOutBtn.removeAttribute('disabled');
+        }
+      }
     }
 
     function zoomMap(factor) {
-      mapScale = Math.min(Math.max(mapScale * factor, 0.6), 4.5);
+      const targetScale = mapScale * factor;
+      // Giới hạn: Có thể phóng to (zoom in) nhưng tuyệt đối không thu nhỏ (zoom out) quá kích thước ban đầu (scale = 1.0)
+      if (targetScale <= 1.0) {
+        resetMapView();
+        return;
+      }
+      mapScale = Math.min(targetScale, 4.5);
       updateTransform();
     }
 
@@ -1485,6 +1507,7 @@ if (typeof window !== 'undefined') {
 
     // Xử lý kéo rê chuột
     mapContainer.addEventListener('mousedown', (e) => {
+      if (mapScale <= 1.0) return; // Không cần kéo khi map ở kích thước mặc định ban đầu
       isDragging = true;
       dragStartX = e.clientX - mapTranslateX;
       dragStartY = e.clientY - mapTranslateY;
@@ -1517,6 +1540,7 @@ if (typeof window !== 'undefined') {
 
     mapContainer.addEventListener('touchstart', (e) => {
       if (e.touches.length === 1) {
+        if (mapScale <= 1.0) return; // Không cần kéo khi map ở kích thước mặc định ban đầu
         isDragging = true;
         dragStartX = e.touches[0].clientX - mapTranslateX;
         dragStartY = e.touches[0].clientY - mapTranslateY;
@@ -1543,8 +1567,13 @@ if (typeof window !== 'undefined') {
           e.touches[0].clientX - e.touches[1].clientX,
           e.touches[0].clientY - e.touches[1].clientY
         );
-        mapScale = Math.min(Math.max(touchStartScale * (curDist / touchStartDist), 0.6), 4.5);
-        updateTransform();
+        const targetScale = touchStartScale * (curDist / touchStartDist);
+        if (targetScale <= 1.0) {
+          resetMapView();
+        } else {
+          mapScale = Math.min(targetScale, 4.5);
+          updateTransform();
+        }
       }
     }, { passive: true });
 
