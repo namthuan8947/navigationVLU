@@ -1152,28 +1152,8 @@ if (typeof window !== 'undefined') {
     <!-- ==================== HƯỚNG DẪN CHI TIẾT THEO TAB ==================== -->
     <section class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 sm:p-5">
       
-      <div id="routeHeader" class="flex items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-3.5">
-        <div>
-          <span id="routeBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 uppercase tracking-wide">Phương tiện: Xe Máy</span>
-          <h2 id="routeTitle" class="text-lg sm:text-xl font-bold text-vlu-navy mt-1">Hướng Dẫn Đi Xe Máy Vào Khám Bệnh</h2>
-        </div>
-
-        <button onclick="focusToaG()" class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-vlu-red font-bold text-xs sm:text-sm rounded-xl border border-red-200 flex items-center gap-1.5 transition-all active:scale-95 flex-shrink-0" title="Định vị Tòa G trên bản đồ">
-          <svg class="w-4 h-4 text-vlu-red" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <circle cx="12" cy="12" r="3"/>
-            <line x1="12" y1="2" x2="12" y2="5"/>
-            <line x1="12" y1="19" x2="12" y2="22"/>
-            <line x1="2" y1="12" x2="5" y2="12"/>
-            <line x1="19" y1="12" x2="22" y2="12"/>
-          </svg>
-          <span>Tìm Tòa G</span>
-        </button>
-      </div>
-
-      <!-- Tóm tắt đường đi nhanh -->
-      <div id="quickGuideAlert" class="bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-xl mb-3 text-slate-800 text-sm sm:text-base leading-relaxed">
-        <strong>Tóm tắt:</strong> Đi vào Cổng Chính Đặng Thùy Trâm ➔ Chạy theo đúng lòng đường trắng bao quanh Tòa A để vào Hầm gửi xe Tòa I ➔ Sau đó đi bộ qua hướng Hồ bơi khoảng 50m vào Tòa G, đi thang máy lên Lầu 12.
+      <div id="routeHeader" class="border-b border-slate-100 pb-3 mb-4">
+        <h2 id="routeTitle" class="text-lg sm:text-xl font-bold text-vlu-navy">Hướng Dẫn Đi Xe Máy Vào Khám Bệnh</h2>
       </div>
 
       <!-- Khung Lưu Ý Quan Trọng Về Lối Đi Nội Bộ (Dành cho bệnh nhân) -->
@@ -1764,16 +1744,8 @@ if (typeof window !== 'undefined') {
 
       // Cập nhật thông tin thẻ
       const data = ROUTES_DATA[tabKey];
-      document.getElementById('routeBadge').textContent = data.badge;
-      document.getElementById('routeTitle').textContent = data.title;
-      
-      const alertBox = document.getElementById('quickGuideAlert');
-      alertBox.innerHTML = data.quickGuide;
-      if (tabKey === 'grab') {
-        alertBox.className = 'bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r-xl mb-4 text-slate-800 text-sm sm:text-base leading-relaxed';
-      } else {
-        alertBox.className = 'bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-xl mb-4 text-slate-800 text-sm sm:text-base leading-relaxed';
-      }
+      const routeTitleEl = document.getElementById('routeTitle');
+      if (routeTitleEl) routeTitleEl.textContent = data.title;
 
       document.getElementById('btnGoogleMaps').href = data.gmapsUrl;
       document.getElementById('btnGoogleMapsText').textContent = data.gmapsBtnText;
