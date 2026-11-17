@@ -4,6 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Đường tới khoa Răng Hàm Mặt VLU - Cơ sở chính</title>
+
+  <!-- Google tag (gtag.js) - Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-2EH4PM54CL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-2EH4PM54CL', {
+      send_page_view: true
+    });
+  </script>
+
   
   <!-- Favicon / Biểu tượng thanh tab trình duyệt (Logo Khiên Đỏ VLU) -->
   <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
@@ -1764,6 +1777,10 @@ if (typeof window !== 'undefined') {
       if (!ROUTES_DATA[tabKey]) return;
       currentTab = tabKey;
 
+      if (typeof gtag === 'function') {
+        gtag('event', 'select_route_tab', { tab_name: tabKey });
+      }
+
       const tabIds = ['motorbike', 'car', 'grab'];
       tabIds.forEach(key => {
         const btn = document.getElementById(key === 'motorbike' ? 'tabMotorbike' : key === 'car' ? 'tabCar' : 'tabGrab');
@@ -1870,6 +1887,10 @@ if (typeof window !== 'undefined') {
       const data = (window.LANDMARKS_CONFIG && window.LANDMARKS_CONFIG[landmarkId]) ? window.LANDMARKS_CONFIG[landmarkId] : null;
       if (!data) return;
 
+      if (typeof gtag === 'function') {
+        gtag('event', 'view_landmark', { landmark_id: landmarkId, landmark_name: data.name });
+      }
+
       document.getElementById('modalBadge').textContent = data.badge;
       document.getElementById('modalBadge').style.backgroundColor = (data.badgeColor || '#C8102E') + '20';
       document.getElementById('modalBadge').style.color = data.badgeColor || '#C8102E';
@@ -1964,6 +1985,38 @@ if (typeof window !== 'undefined') {
     window.addEventListener('DOMContentLoaded', () => {
       switchTab('motorbike');
     });
+  
+    // Google Analytics 4 Custom Event Listeners
+    window.addEventListener('DOMContentLoaded', () => {
+      const btnGmaps = document.getElementById('btnGoogleMaps');
+      if (btnGmaps) {
+        btnGmaps.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'click_google_maps', {
+              route_tab: currentTab,
+              target_url: btnGmaps.href
+            });
+          }
+        });
+      }
+
+      document.querySelectorAll('a[href^="tel:"]').forEach(el => {
+        el.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'click_hotline', { phone_number: el.href });
+          }
+        });
+      });
+
+      document.querySelectorAll('a[href*="zalo.me"]').forEach(el => {
+        el.addEventListener('click', () => {
+          if (typeof gtag === 'function') {
+            gtag('event', 'click_zalo', { url: el.href });
+          }
+        });
+      });
+    });
+
   </script>
 </body>
 </html>
