@@ -161,13 +161,13 @@ var LANDMARKS_CONFIG = {
     badge: "ĐÍCH ĐẾN KHÁM BỆNH",
     badgeColor: "#C8102E",
     tagline: "Khoa Răng Hàm Mặt đặt tại Lầu 12 của Tòa G",
-    description: "Tòa G là khối nhà đa chức năng bề thế nằm ở khu vực phía Nam khuôn viên trường. Toàn bộ Khoa Răng Hàm Mặt Trường Đại học Văn Lang được bố trí tại Lầu 12 của Tòa G với hệ thống Lab Răng Hàm Mặt, ghế máy nha khoa hiện đại, phòng CT Cone Beam và phòng điều trị chuyên sâu. Tòa nhà còn có Hội trường N2T1, khu thực hành du lịch và phòng thanh nhạc.",
+    description: "Toàn bộ Khoa Răng Hàm Mặt Trường Đại học Văn Lang được bố trí tại Lầu 12 của Tòa G. Đây là trung tâm đào tạo và khám chữa bệnh nha khoa với hệ thống ghế máy nha khoa hiện đại, phòng chụp phim CT Cone Beam 3D, Lab tiền lâm sàng Răng Hàm Mặt và các phòng điều trị chuyên sâu phục vụ bệnh nhân.",
     floorGuide: "Tầng Trệt: Sảnh đón tiếp & Thang máy di chuyển | Lầu 12: Quầy lễ tân đón tiếp, tiếp nhận hồ sơ bệnh án & các phòng khám chuyên khoa RHM.",
-    patientTips: "Quý bệnh nhân và người nhà bước vào sảnh Tầng Trệt Tòa G, tự đi thang máy lên thẳng Lầu 12. Quầy lễ tân đặt tại Lầu 12 sẽ hỗ trợ tiếp đón, phát số thứ tự và phân luồng vào phòng khám.",
+    patientTips: "",
     images: [
       {
         url: "images/toa-g-mat-tien.jpg",
-        caption: "Mặt tiền Tòa G (Khoa Răng Hàm Mặt tại Lầu 12, Hội trường N2T1 & Lab RHM)"
+        caption: "Mặt tiền Tòa G (Khoa Răng Hàm Mặt tại Lầu 12 với hệ thống ghế nha khoa & Lab RHM)"
       },
       {
         url: "images/toa-g.jpg",
@@ -175,7 +175,7 @@ var LANDMARKS_CONFIG = {
       }
     ],
     imageUrl: "images/toa-g-mat-tien.jpg",
-    imageCaption: "Mặt tiền Tòa G (Khoa Răng Hàm Mặt tại Lầu 12, Hội trường N2T1 & Lab RHM)",
+    imageCaption: "Mặt tiền Tòa G (Khoa Răng Hàm Mặt tại Lầu 12 với hệ thống ghế nha khoa & Lab RHM)",
     googleMapsUrl: "",
     coords: { x: 492, y: 450 }
   },
@@ -399,7 +399,7 @@ var LANDMARKS_CONFIG = {
     tagline: "Cụm tòa nhà giảng đường liên hoàn B và C ở phía Đông Tòa K",
     description: "Cụm tòa nhà giảng đường liên hoàn B và C. Trong đó Tòa B hiện đại sừng sững bên quảng trường trung tâm, và Tòa C nổi bật với hệ lam màu đỏ cam biểu tượng cho 'Ngọn Lửa' tri thức, nơi bố trí không gian Learning Commons và các phòng học chuyên ngành hiện đại.",
     floorGuide: "Nằm ở phía Đông Tòa K và khoảng sân trung tâm.",
-    patientTips: "Nằm ở phía Đông khuôn viên, cách Tòa G khoảng 150m.",
+    patientTips: "",
     images: [
       {
         url: "images/toa-b.jpg",
@@ -1369,7 +1369,7 @@ if (typeof window !== 'undefined') {
           </p>
         </div>
 
-        <div class="bg-amber-50 p-3.5 rounded-xl border border-amber-200">
+        <div id="modalTipsBox" class="bg-amber-50 p-3.5 rounded-xl border border-amber-200">
           <h4 class="text-xs font-bold uppercase tracking-wider text-amber-800 mb-1 flex items-center gap-1.5">
             <span>💡</span>
             <span>Lời khuyên dành cho bệnh nhân & thân nhân:</span>
@@ -1836,8 +1836,21 @@ if (typeof window !== 'undefined') {
       document.getElementById('modalTitle').textContent = data.name;
       document.getElementById('modalTagline').textContent = data.tagline;
       document.getElementById('modalDesc').textContent = data.description;
-      document.getElementById('modalFloor').textContent = data.floorGuide || 'Đang cập nhật phân luồng cụ thể.';
-      document.getElementById('modalTips').textContent = data.patientTips || 'Vui lòng liên hệ nhân viên hướng dẫn tại sảnh nếu cần hỗ trợ.';
+      const floorBox = document.getElementById('modalFloorBox');
+      if (data.floorGuide && data.floorGuide.trim() !== '') {
+        document.getElementById('modalFloor').textContent = data.floorGuide.trim();
+        if (floorBox) floorBox.classList.remove('hidden');
+      } else {
+        if (floorBox) floorBox.classList.add('hidden');
+      }
+
+      const tipsBox = document.getElementById('modalTipsBox');
+      if (data.patientTips && data.patientTips.trim() !== '') {
+        document.getElementById('modalTips').textContent = data.patientTips.trim();
+        if (tipsBox) tipsBox.classList.remove('hidden');
+      } else {
+        if (tipsBox) tipsBox.classList.add('hidden');
+      }
       
       const imgEl = document.getElementById('modalImage');
       const placeholderEl = document.getElementById('modalPlaceholder');
