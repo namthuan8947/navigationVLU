@@ -1380,16 +1380,6 @@ if (typeof window !== 'undefined') {
           </p>
         </div>
 
-        <div id="modalFloorBox" class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-          <h4 class="text-xs font-bold uppercase tracking-wider text-vlu-navy mb-1 flex items-center gap-1.5">
-            <span>🏢</span>
-            <span>Phân luồng & Vị trí đón tiếp:</span>
-          </h4>
-          <p id="modalFloor" class="text-slate-700 text-sm leading-relaxed">
-            Thông tin tầng và cửa vào.
-          </p>
-        </div>
-
 
 
       </div>
@@ -1964,13 +1954,6 @@ if (typeof window !== 'undefined') {
       document.getElementById('modalTitle').textContent = data.name;
       document.getElementById('modalTagline').textContent = data.tagline;
       document.getElementById('modalDesc').textContent = data.description;
-      const floorBox = document.getElementById('modalFloorBox');
-      if (data.floorGuide && data.floorGuide.trim() !== '') {
-        document.getElementById('modalFloor').textContent = data.floorGuide.trim();
-        if (floorBox) floorBox.classList.remove('hidden');
-      } else {
-        if (floorBox) floorBox.classList.add('hidden');
-      }
 
       const imgEl = document.getElementById('modalImage');
       const placeholderEl = document.getElementById('modalPlaceholder');
