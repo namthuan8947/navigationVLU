@@ -239,15 +239,25 @@ var LANDMARKS_CONFIG = {
 
   "ham-toa-a": {
     id: "ham-toa-a",
-    name: "Lối Vào Hầm Xe Tòa A & Bãi Ô Tô",
-    badge: "BÃI GIỮ XE Ô TÔ / XE MÁY",
-    badgeColor: "#E11D48",
-    tagline: "Khu vực gửi ô tô và xe máy cán bộ, khách đến liên hệ",
-    description: "Hầm đỗ xe dưới khối Tòa A kết hợp với các vạch đỗ ô tô quy định dọc theo tuyến đường nội bộ của trường.",
-    floorGuide: "Hầm Tòa A & Vạch đỗ xe ô tô dọc tuyến đường nội bộ có biển báo P.",
-    patientTips: "Khi lái ô tô qua Cổng Chính, quý khách giảm tốc độ để được hướng dẫn vào vị trí đỗ ô tô còn trống trong khuôn viên.",
-    imageUrl: "",
-    imageCaption: "Lối vào hầm Tòa A và vạch đỗ xe ô tô nội bộ",
+    name: "Hầm Giữ Xe Tòa A (Hầm B3)",
+    badge: "BÃI GIỮ XE MÁY & Ô TÔ CHÍNH",
+    badgeColor: "#0D9488",
+    tagline: "Khu vực gửi xe máy & xe ô tô dành cho bệnh nhân đến khám bệnh",
+    description: "Hầm giữ xe hiện đại nằm ngay dưới khối Tòa A. Cả xe máy và xe ô tô của bệnh nhân đến khám tại Khoa Răng Hàm Mặt đều chạy thẳng xuống hầm B3 để gửi xe. Sau khi gửi xe, quý khách đi cầu thang để lên lại mặt đất khuôn viên trường, sau đó tiếp tục đi bộ qua sảnh Tòa G.",
+    floorGuide: "Hầm B3 Tòa A: Bãi gửi xe máy & xe ô tô chính | Cầu thang bộ / thang máy: Lên khuôn viên trường di chuyển sang Tòa G.",
+    patientTips: "Vào Cổng Chính (69/68 Đặng Thùy Trâm), rẽ phải đi thẳng 150m đến hầm xe Tòa A. Chạy thẳng xuống hầm B3 để gửi xe.",
+    images: [
+      {
+        url: "images/toa-a-cong-chinh.jpg",
+        caption: "Mặt tiền Tòa A & Lối dốc dẫn vào Hầm gửi xe B3"
+      },
+      {
+        url: "images/toa-a-so-do-3d.jpg",
+        caption: "Sơ đồ kiến trúc 3D Tòa A & Vị trí Hầm xe B3"
+      }
+    ],
+    imageUrl: "images/toa-a-cong-chinh.jpg",
+    imageCaption: "Mặt tiền Tòa A & Lối dốc dẫn vào Hầm gửi xe B3",
     googleMapsUrl: "",
     coords: { x: 435, y: 245 }
   },
@@ -1122,18 +1132,17 @@ if (typeof window !== 'undefined') {
 
           <!-- 7. TUYẾN ĐƯỜNG CHỈ DẪN DẪN ĐỘNG THEO 3 TAB (DASH THƯ THÁI, CHẠY CHẬM RÕ NÉT) -->
 
-          <!-- === TAB 1: TUYẾN XE MÁY === -->
+          <!-- === TAB 1: TUYẾN XE MÁY (Gửi tại Hầm B3 Tòa A) === -->
           <g id="route-motorbike" class="route-layer pointer-events-none" style="display: none;">
-            <!-- Xe máy chạy: Cổng chính -> theo lòng đường trắng bao quanh Tòa A -> Lối vào Hầm Tòa I (Xanh lá động từ Cổng chính) -->
+            <!-- Xe máy chạy: Cổng chính -> Rẽ phải đi thẳng 150m vào Hầm Tòa A (Hầm B3) -->
             <path d="M 500 25 
                      L 500 100 
-                     Q 440 130 385 180 
-                     Q 330 220 275 235 
-                     L 275 265" 
-                  fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="route-vehicle" marker-end="url(#arrowRouteWalk)" />
+                     Q 440 130 435 175 
+                     L 435 225" 
+                  fill="none" stroke="#16A34A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="route-vehicle" marker-end="url(#arrowRouteWalk)" />
 
-            <!-- Điểm dừng gửi xe máy tại Hầm Tòa I (Vector Icon) -->
-            <g transform="translate(275, 265)">
+            <!-- Điểm dừng gửi xe máy tại Hầm Tòa A (Hầm B3) (Vector Icon Xe máy) -->
+            <g transform="translate(435, 225)">
               <circle cx="0" cy="0" r="13" fill="#16A34A" stroke="#FFFFFF" stroke-width="2.5" filter="url(#buildingShadow)" />
               <g transform="translate(-6.5, -6)" stroke="#FFFFFF" stroke-width="1.3" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="2.5" cy="8.5" r="2.2" />
@@ -1144,15 +1153,16 @@ if (typeof window !== 'undefined') {
               </g>
             </g>
 
-            <!-- Tuyến đi bộ: Từ Tòa I men qua bờ Hồ bơi vào thẳng sảnh Tòa G -->
-            <path d="M 297 325 
-                     Q 335 375 370 410 
-                     L 417 445" 
+            <!-- Tuyến đi bộ xe máy: Từ Hầm Tòa A lên khuôn viên trường, đi bộ qua Tòa G vào sảnh Tòa G -->
+            <path d="M 445 235 
+                     L 475 285 
+                     L 475 365 
+                     L 475 418" 
                   fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="route-walk" marker-end="url(#arrowRouteWalk)" />
 
-            <g transform="translate(365, 395)">
-              <rect x="-35" y="-9" width="70" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
-              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ 50m</text>
+            <g transform="translate(490, 335)">
+              <rect x="-42" y="-9" width="84" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
+              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ qua Tòa G</text>
             </g>
           </g>
 
@@ -1248,14 +1258,14 @@ if (typeof window !== 'undefined') {
           <div class="text-slate-600 text-[11px] mt-0.5">Lầu 12: Khoa RHM</div>
         </button>
 
-        <button onclick="openLandmarkModal('ham-toa-i')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-teal-50 hover:border-teal-300 text-left transition-all">
-          <div class="font-bold text-teal-800 flex items-center gap-1">🛵 Hầm Tòa I</div>
-          <div class="text-slate-600 text-[11px] mt-0.5">Bãi giữ xe máy</div>
+        <button onclick="openLandmarkModal('ham-toa-a')" class="p-2.5 rounded-xl border-2 border-teal-300 bg-teal-50/80 hover:bg-teal-100 text-left transition-all">
+          <div class="font-bold text-teal-900 flex items-center gap-1">🛵🚗 Hầm Tòa A</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Hầm B3: Xe máy & Ô tô</div>
         </button>
 
-        <button onclick="openLandmarkModal('ham-toa-a')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-orange-50 hover:border-orange-300 text-left transition-all">
-          <div class="font-bold text-orange-800 flex items-center gap-1">🚗 Hầm Tòa A</div>
-          <div class="text-slate-600 text-[11px] mt-0.5">Bãi đỗ xe ô tô</div>
+        <button onclick="openLandmarkModal('ham-toa-i')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100 text-left transition-all">
+          <div class="font-bold text-slate-700 flex items-center gap-1">🛵 Hầm Tòa I</div>
+          <div class="text-slate-600 text-[11px] mt-0.5">Bãi xe KTX</div>
         </button>
 
         <button onclick="openLandmarkModal('cong-sau')" class="p-2.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-amber-50 hover:border-amber-300 text-left transition-all">
@@ -1461,26 +1471,44 @@ if (typeof window !== 'undefined') {
         name: 'Xe máy',
         badge: 'Phương tiện: Xe Máy',
         title: 'Hướng Dẫn Đi Xe Máy Vào Khám Bệnh',
-        quickGuide: '<strong>Tóm tắt:</strong> Đi vào Cổng Chính Đặng Thùy Trâm ➔ Chạy theo đúng lòng đường trắng bao quanh Tòa A để vào Hầm gửi xe Tòa I ➔ Sau đó đi bộ qua hướng Hồ bơi khoảng 50m vào sảnh Tòa G, tự đi thang máy lên Lầu 12.',
+        quickGuide: '<strong>Tóm tắt:</strong> Vào Cổng Chính ➔ Rẽ phải đi thẳng 150m đến Hầm Tòa A ➔ Xuống hầm B3 gửi xe máy ➔ Đi cầu thang lên khuôn viên ➔ Đi bộ qua Tòa G ➔ Đi thang máy P9/P10 lên Lầu 12 ➔ Quẹo phải đến Lễ tân.',
         gmapsUrl: 'https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7',
         gmapsBtnText: 'Mở Google Maps dẫn đường đến Cổng Chính',
         steps: [
           {
             num: 1,
-            title: 'Đến Cổng Chính (Đặng Thùy Trâm)',
-            desc: 'Địa chỉ 69/68 Đặng Thùy Trâm. Đi vào cổng và chạy thẳng theo lòng đường trắng.',
+            title: 'Vào Cổng Chính (69/68 Đặng Thùy Trâm, P. Bình Lợi Trung)',
+            desc: 'Rẽ phải đi thẳng 150m đến hầm gửi xe Tòa A.',
             landmarkId: 'cong-chinh'
           },
           {
             num: 2,
-            title: 'Gửi xe máy tại Hầm Tòa I',
-            desc: 'Chạy vòng qua Tòa A theo lòng đường trắng để xuống dốc hầm xe máy Tòa I.',
-            landmarkId: 'ham-toa-i'
+            title: 'Gửi xe tại Hầm Tòa A (Hầm B3)',
+            desc: 'Chạy thẳng xuống hầm B3 để gửi xe.',
+            landmarkId: 'ham-toa-a'
           },
           {
             num: 3,
-            title: 'Đi bộ qua Hồ bơi vào Tòa G, lên Lầu 12',
-            desc: 'Lên dốc hầm Tòa I, đi bộ men theo lối cạnh Hồ bơi khoảng 50m vào sảnh Tòa G, sau đó tự đi thang máy lên Lầu 12 để đến Quầy lễ tân tiếp nhận bệnh nhân.',
+            title: 'Đi cầu thang để lên khuôn viên trường',
+            desc: 'Sau khi gửi xe xong, đi cầu thang bộ hoặc thang máy hầm để lên lại mặt đất khuôn viên trường.',
+            landmarkId: 'toa-a'
+          },
+          {
+            num: 4,
+            title: 'Tiếp tục đi bộ qua Tòa G, đến sảnh Tòa G',
+            desc: 'Đi bộ theo lối đi trong khuôn viên qua hướng Tòa G để đến sảnh chính Tòa G.',
+            landmarkId: 'toa-g'
+          },
+          {
+            num: 5,
+            title: 'Đi thang máy P9 hoặc P10 lên Lầu 12 đến Khoa RHM',
+            desc: 'Tại sảnh trệt Tòa G, sử dụng thang máy P9 hoặc P10 để di chuyển lên Lầu 12 (Khoa Răng Hàm Mặt).',
+            landmarkId: 'toa-g'
+          },
+          {
+            num: 6,
+            title: 'Ra khỏi thang, đi thẳng và quẹo phải để đến Lễ tân',
+            desc: 'Bước ra khỏi thang máy Lầu 12, đi thẳng và quẹo phải để đến Quầy Lễ Tân tiếp nhận bệnh nhân khám bệnh.',
             landmarkId: 'toa-g',
             highlight: true
           }
@@ -1492,26 +1520,44 @@ if (typeof window !== 'undefined') {
         name: 'Xe ô tô',
         badge: 'Phương tiện: Xe Ô Tô',
         title: 'Hướng Dẫn Đi Xe Ô Tô Vào Khám Bệnh',
-        quickGuide: '<strong>Tóm tắt:</strong> Vào Cổng Chính Đặng Thùy Trâm ➔ Chạy thẳng theo lòng đường vào Lối vào Hầm xe Tòa A hoặc đỗ tại các vạch quy định quanh khuôn viên ➔ Đi bộ qua sân giữa Tòa J & K vào Tòa G, tự đi thang máy lên Lầu 12.',
+        quickGuide: '<strong>Tóm tắt:</strong> Vào Cổng Chính ➔ Rẽ phải đi thẳng 150m đến Hầm Tòa A ➔ Lái xe xuống hầm B3 gửi xe ➔ Đi cầu thang lên khuôn viên ➔ Đi bộ qua Tòa G ➔ Đi thang máy P9/P10 lên Lầu 12 ➔ Quẹo phải đến Lễ tân.',
         gmapsUrl: 'https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7',
         gmapsBtnText: 'Mở Google Maps dẫn đường đến Cổng Chính',
         steps: [
           {
             num: 1,
-            title: 'Đến Cổng Chính (Đặng Thùy Trâm)',
-            desc: 'Chạy chậm qua Cổng Chính để vào vị trí đỗ ô tô còn trống trong khuôn viên.',
+            title: 'Vào Cổng Chính (69/68 Đặng Thùy Trâm, P. Bình Lợi Trung)',
+            desc: 'Rẽ phải đi thẳng 150m đến hầm gửi xe Tòa A.',
             landmarkId: 'cong-chinh'
           },
           {
             num: 2,
-            title: 'Gửi ô tô tại Hầm Tòa A hoặc vạch đỗ nội bộ',
-            desc: 'Đỗ xe tại hầm dưới khối Tòa A hoặc các ô kẻ vạch dành cho ô tô dọc tuyến đường nội bộ.',
+            title: 'Gửi xe tại Hầm Tòa A (Hầm B3)',
+            desc: 'Chạy thẳng xuống hầm B3 để gửi xe.',
             landmarkId: 'ham-toa-a'
           },
           {
             num: 3,
-            title: 'Đi bộ qua sân giữa Tòa J & K vào Tòa G, lên Lầu 12',
-            desc: 'Băng qua khoảng sân trung tâm giữa Tòa J và Tòa K khoảng 100m vào sảnh Tòa G, sau đó tự đi thang máy lên Lầu 12 gặp Quầy lễ tân khám bệnh.',
+            title: 'Đi cầu thang để lên khuôn viên trường',
+            desc: 'Sau khi đỗ xe xong, đi cầu thang bộ hoặc thang máy hầm để lên lại mặt đất khuôn viên trường.',
+            landmarkId: 'toa-a'
+          },
+          {
+            num: 4,
+            title: 'Tiếp tục đi bộ qua Tòa G, đến sảnh Tòa G',
+            desc: 'Đi bộ theo lối đi trong khuôn viên qua hướng Tòa G để đến sảnh chính Tòa G.',
+            landmarkId: 'toa-g'
+          },
+          {
+            num: 5,
+            title: 'Đi thang máy P9 hoặc P10 lên Lầu 12 đến Khoa RHM',
+            desc: 'Tại sảnh trệt Tòa G, sử dụng thang máy P9 hoặc P10 để di chuyển lên Lầu 12 (Khoa Răng Hàm Mặt).',
+            landmarkId: 'toa-g'
+          },
+          {
+            num: 6,
+            title: 'Ra khỏi thang, đi thẳng và quẹo phải để đến Lễ tân',
+            desc: 'Bước ra khỏi thang máy Lầu 12, đi thẳng và quẹo phải để đến Quầy Lễ Tân tiếp nhận bệnh nhân khám bệnh.',
             landmarkId: 'toa-g',
             highlight: true
           }
