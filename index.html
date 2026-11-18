@@ -125,10 +125,16 @@
     #mapContainer {
       touch-action: none;
       user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     #mapSvg {
       will-change: transform;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transform-style: preserve-3d;
     }
 
     /* Chế độ xem mở rộng toàn màn hình */
@@ -671,7 +677,7 @@ if (typeof window !== 'undefined') {
       <!-- BẢN ĐỒ VECTOR SVG NGUYÊN BẢN (1000 x 650) - KHÔNG CÒN RẠCH LĂNG, CÂN ĐỐI & SẮC NÉT -->
       <div id="mapContainer" class="relative w-full h-[325px] sm:h-[460px] md:h-[530px] bg-[#F8FAFC] overflow-hidden cursor-grab active:cursor-grabbing select-none flex items-center justify-center">
         
-        <svg id="mapSvg" viewBox="0 0 1000 650" class="w-full h-full transform-gpu origin-top-left transition-transform duration-75">
+        <svg id="mapSvg" viewBox="0 0 1000 650" class="w-full h-full transform-gpu origin-top-left">
           <defs>
             <!-- Bóng đổ mềm cho tòa nhà -->
             <filter id="buildingShadow" x="-10%" y="-10%" width="125%" height="125%">
@@ -1525,8 +1531,6 @@ if (typeof window !== 'undefined') {
     let mapTranslateX = 0;
     let mapTranslateY = 0;
     let isDragging = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
     let isFullscreen = false;
 
     const mapContainer = document.getElementById('mapContainer');
@@ -1536,9 +1540,20 @@ if (typeof window !== 'undefined') {
     const MIN_SCALE = 0.8;
     const MAX_SCALE = 4.5;
 
+    // Cache kích thước khung bản đồ để tránh forced reflow / layout thrashing khi kéo
+    let cachedCw = 0;
+    let cachedCh = 0;
+
+    function updateCachedDimensions() {
+      cachedCw = mapContainer.clientWidth || 750;
+      cachedCh = mapContainer.clientHeight || 530;
+    }
+    updateCachedDimensions();
+    window.addEventListener('resize', updateCachedDimensions);
+
     function clampPan() {
-      const cw = mapContainer.clientWidth || 750;
-      const ch = mapContainer.clientHeight || 530;
+      const cw = cachedCw || mapContainer.clientWidth || 750;
+      const ch = cachedCh || mapContainer.clientHeight || 530;
       const baseScale = Math.min(cw / 1000, ch / 650);
       const baseW = 1000 * baseScale;
       const baseH = 650 * baseScale;
@@ -1548,18 +1563,16 @@ if (typeof window !== 'undefined') {
       const scaledW = baseW * mapScale;
       const scaledH = baseH * mapScale;
       
-      // Giới hạn biên độ kéo/lướt không vượt quá mép khuôn viên (+ đệm đàn hồi 25px)
-      const pad = 25;
+      // Giới hạn biên độ kéo/lướt không vượt quá mép khuôn viên (+ đệm đàn hồi 30px)
+      const pad = 30;
       
       let minX, maxX, minY, maxY;
       
       if (scaledW <= cw) {
-        // Bản đồ vừa hoặc nhỏ hơn khung nhìn: cố định tâm, chỉ cho phép dao động đàn hồi nhẹ
         const centerTx = (cw - scaledW) / 2 - offsetX * mapScale;
         minX = centerTx - pad;
         maxX = centerTx + pad;
       } else {
-        // Bản đồ lớn hơn khung nhìn: cho phép lướt mép này sang mép kia, không lướt quá bờ cõi
         minX = cw - pad - (offsetX + baseW) * mapScale;
         maxX = pad - offsetX * mapScale;
       }
@@ -1577,9 +1590,19 @@ if (typeof window !== 'undefined') {
       mapTranslateY = Math.min(Math.max(mapTranslateY, minY), maxY);
     }
 
-    function updateTransform() {
+    // Áp dụng transform với GPU translate3d và kiểm soát transition linh hoạt
+    function applyTransform(withTransition = false) {
+      if (withTransition) {
+        mapSvg.style.transition = 'transform 0.28s cubic-bezier(0.25, 1, 0.5, 1)';
+      } else {
+        mapSvg.style.transition = 'none';
+      }
+      mapSvg.style.transform = `translate3d(${mapTranslateX.toFixed(1)}px, ${mapTranslateY.toFixed(1)}px, 0) scale(${mapScale.toFixed(3)})`;
+    }
+
+    function updateTransform(withTransition = true) {
       clampPan();
-      mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
+      applyTransform(withTransition);
       
       // Cập nhật trạng thái nút thu nhỏ (-)
       const zoomOutBtn = document.getElementById('zoomOutBtn');
@@ -1593,8 +1616,8 @@ if (typeof window !== 'undefined') {
     }
 
     function zoomMap(factor) {
+      updateCachedDimensions();
       const targetScale = mapScale * factor;
-      // Cho phép thu nhỏ mở rộng góc nhìn nhưng giới hạn sàn ở mức 0.8 (không thu nhỏ quá mức)
       if (targetScale <= MIN_SCALE) {
         mapScale = MIN_SCALE;
       } else if (targetScale >= MAX_SCALE) {
@@ -1602,19 +1625,21 @@ if (typeof window !== 'undefined') {
       } else {
         mapScale = targetScale;
       }
-      updateTransform();
+      updateTransform(true);
     }
 
     function resetMapView() {
+      updateCachedDimensions();
       mapScale = 1;
       mapTranslateX = 0;
       mapTranslateY = 0;
-      updateTransform();
+      updateTransform(true);
     }
 
     function focusCongSau() {
-      const cw = mapContainer.clientWidth || 750;
-      const ch = mapContainer.clientHeight || 530;
+      updateCachedDimensions();
+      const cw = cachedCw;
+      const ch = cachedCh;
       const baseScale = Math.min(cw / 1000, ch / 650);
       const baseW = 1000 * baseScale;
       const baseH = 650 * baseScale;
@@ -1627,15 +1652,16 @@ if (typeof window !== 'undefined') {
       const targetSvgX = 600;
       mapTranslateX = (cw / 2) - (offsetX + targetSvgX * baseScale) * mapScale;
       
-      // Căn đáy bản đồ cách mép dưới 25px để hiển thị trọn vẹn Cổng Sau và ghim Grab, không để khoảng trống thừa
+      // Căn đáy bản đồ cách mép dưới 25px để hiển thị trọn vẹn Cổng Sau và ghim Grab
       mapTranslateY = ch - 25 - (offsetY + baseH) * mapScale;
       
-      updateTransform();
+      updateTransform(true);
     }
 
     function focusToaG() {
-      const cw = mapContainer.clientWidth || 750;
-      const ch = mapContainer.clientHeight || 530;
+      updateCachedDimensions();
+      const cw = cachedCw;
+      const ch = cachedCh;
       const baseScale = Math.min(cw / 1000, ch / 650);
       const offsetX = (cw - 1000 * baseScale) / 2;
       const offsetY = (ch - 650 * baseScale) / 2;
@@ -1644,7 +1670,7 @@ if (typeof window !== 'undefined') {
       mapTranslateX = (cw / 2) - (offsetX + 490 * baseScale) * mapScale;
       mapTranslateY = (ch / 2) - (offsetY + 450 * baseScale) * mapScale;
       
-      updateTransform();
+      updateTransform(true);
       openLandmarkModal('toa-g');
     }
 
@@ -1667,34 +1693,129 @@ if (typeof window !== 'undefined') {
         fsText.textContent = 'Mở rộng map';
         document.body.style.overflow = '';
       }
-      resetMapView();
+      setTimeout(() => {
+        updateCachedDimensions();
+        resetMapView();
+      }, 50);
     }
 
-    // Nhấp đúp (Double click / Double tap) để phóng to ngay vị trí bấm
-    mapContainer.addEventListener('dblclick', (e) => {
-      e.preventDefault();
-      zoomMap(1.4);
-    });
+    // ==================== HỆ THỐNG KÉO THẢ (PAN & ZOOM) TỐI ƯU 60-120FPS ====================
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialTranslateX = 0;
+    let initialTranslateY = 0;
+    let panRafId = null;
+    let isPinching = false;
+    let initialPinchDist = 0;
+    let initialPinchScale = 1;
 
-    // Xử lý kéo rê chuột
-    mapContainer.addEventListener('mousedown', (e) => {
+    function startDrag(clientX, clientY) {
       isDragging = true;
-      dragStartX = e.clientX - mapTranslateX;
-      dragStartY = e.clientY - mapTranslateY;
+      updateCachedDimensions();
+      mapSvg.style.transition = 'none';
+      dragStartX = clientX;
+      dragStartY = clientY;
+      initialTranslateX = mapTranslateX;
+      initialTranslateY = mapTranslateY;
+    }
+
+    function moveDrag(clientX, clientY) {
+      if (!isDragging) return;
+      const dx = clientX - dragStartX;
+      const dy = clientY - dragStartY;
+      mapTranslateX = initialTranslateX + dx;
+      mapTranslateY = initialTranslateY + dy;
+      clampPan();
+
+      if (!panRafId) {
+        panRafId = requestAnimationFrame(() => {
+          applyTransform(false);
+          panRafId = null;
+        });
+      }
+    }
+
+    function endDrag() {
+      if (!isDragging) return;
+      isDragging = false;
+      if (panRafId) {
+        cancelAnimationFrame(panRafId);
+        panRafId = null;
+      }
+      clampPan();
+      applyTransform(false);
+    }
+
+    // Xử lý chuột (Desktop)
+    mapContainer.addEventListener('mousedown', (e) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      startDrag(e.clientX, e.clientY);
     });
 
     window.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      mapTranslateX = e.clientX - dragStartX;
-      mapTranslateY = e.clientY - dragStartY;
-      clampPan();
-      dragStartX = e.clientX - mapTranslateX;
-      dragStartY = e.clientY - mapTranslateY;
-      mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
+      if (isDragging) {
+        moveDrag(e.clientX, e.clientY);
+      }
     });
 
     window.addEventListener('mouseup', () => {
-      isDragging = false;
+      endDrag();
+    });
+
+    // Xử lý chạm vuốt cảm ứng (Mobile Touch: Pan & Pinch-to-zoom)
+    mapContainer.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 1) {
+        isPinching = false;
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      } else if (e.touches.length === 2) {
+        isDragging = false;
+        isPinching = true;
+        updateCachedDimensions();
+        mapSvg.style.transition = 'none';
+        initialPinchDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        initialPinchScale = mapScale;
+      }
+    }, { passive: false });
+
+    mapContainer.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 1 && isDragging && !isPinching) {
+        if (e.cancelable) e.preventDefault();
+        moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+      } else if (e.touches.length === 2 && isPinching && initialPinchDist > 0) {
+        if (e.cancelable) e.preventDefault();
+        const curDist = Math.hypot(
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY
+        );
+        const targetScale = initialPinchScale * (curDist / initialPinchDist);
+        mapScale = Math.min(Math.max(targetScale, MIN_SCALE), MAX_SCALE);
+        if (!panRafId) {
+          panRafId = requestAnimationFrame(() => {
+            clampPan();
+            applyTransform(false);
+            panRafId = null;
+          });
+        }
+      }
+    }, { passive: false });
+
+    mapContainer.addEventListener('touchend', (e) => {
+      if (e.touches.length === 0) {
+        endDrag();
+        isPinching = false;
+      } else if (e.touches.length === 1) {
+        isPinching = false;
+        startDrag(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    });
+
+    mapContainer.addEventListener('touchcancel', () => {
+      endDrag();
+      isPinching = false;
     });
 
     // Cuộn chuột zoom
@@ -1704,47 +1825,10 @@ if (typeof window !== 'undefined') {
       zoomMap(factor);
     }, { passive: false });
 
-    // Touch Pinch-to-zoom & Pan
-    let touchStartDist = null;
-    let touchStartScale = 1;
-
-    mapContainer.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        isDragging = true;
-        dragStartX = e.touches[0].clientX - mapTranslateX;
-        dragStartY = e.touches[0].clientY - mapTranslateY;
-      } else if (e.touches.length === 2) {
-        isDragging = false;
-        touchStartDist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-        touchStartScale = mapScale;
-      }
-    });
-
-    mapContainer.addEventListener('touchmove', (e) => {
-      if (e.touches.length === 1 && isDragging) {
-        mapTranslateX = e.touches[0].clientX - dragStartX;
-        mapTranslateY = e.touches[0].clientY - dragStartY;
-        clampPan();
-        dragStartX = e.touches[0].clientX - mapTranslateX;
-        dragStartY = e.touches[0].clientY - mapTranslateY;
-        mapSvg.style.transform = `translate(${mapTranslateX}px, ${mapTranslateY}px) scale(${mapScale})`;
-      } else if (e.touches.length === 2 && touchStartDist) {
-        const curDist = Math.hypot(
-          e.touches[0].clientX - e.touches[1].clientX,
-          e.touches[0].clientY - e.touches[1].clientY
-        );
-        const targetScale = touchStartScale * (curDist / touchStartDist);
-        mapScale = Math.min(Math.max(targetScale, MIN_SCALE), MAX_SCALE);
-        updateTransform();
-      }
-    }, { passive: true });
-
-    mapContainer.addEventListener('touchend', () => {
-      isDragging = false;
-      touchStartDist = null;
+    // Nhấp đúp (Double click / Double tap) để phóng to
+    mapContainer.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      zoomMap(1.35);
     });
 
     // Chuyển Tab phương tiện (2 Tab: grab & vehicle)
