@@ -128,7 +128,15 @@
     }
 
     #mapSvg {
-      will-change: transform;
+      shape-rendering: geometricPrecision;
+      text-rendering: geometricPrecision;
+    }
+
+    #mapSvg text {
+      font-family: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif !important;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     /* Chế độ xem mở rộng toàn màn hình */
@@ -671,7 +679,7 @@ if (typeof window !== 'undefined') {
       <!-- BẢN ĐỒ VECTOR SVG NGUYÊN BẢN (1000 x 650) - KHÔNG CÒN RẠCH LĂNG, CÂN ĐỐI & SẮC NÉT -->
       <div id="mapContainer" class="relative w-full h-[325px] sm:h-[460px] md:h-[530px] bg-[#F8FAFC] overflow-hidden cursor-grab active:cursor-grabbing select-none flex items-center justify-center">
         
-        <svg id="mapSvg" viewBox="0 0 1000 650" class="w-full h-full transform-gpu origin-top-left">
+        <svg id="mapSvg" viewBox="0 0 1000 650" class="w-full h-full origin-top-left">
           <defs>
             <!-- Bóng đổ mềm cho tòa nhà -->
             <filter id="buildingShadow" x="-10%" y="-10%" width="125%" height="125%">
@@ -769,7 +777,7 @@ if (typeof window !== 'undefined') {
 
           <!-- Chữ HƯỚNG ĐƯỜNG LƯƠNG NGỌC QUYẾN (Nằm gọn hoàn toàn bên trong canvas, dọc theo mép đường ra) -->
           <g transform="translate(798, 485) rotate(75)">
-            <text x="0" y="0" fill="#475569" font-size="8" font-weight="700">HƯỚNG ĐƯỜNG LƯƠNG NGỌC QUYẾN ➔</text>
+            <text x="0" y="0" fill="#475569" font-size="10" font-weight="700">HƯỚNG ĐƯỜNG LƯƠNG NGỌC QUYẾN ➔</text>
           </g>
 
           <!-- LỐI ĐI NỘI BỘ VĂN LANG (Màu cam) -->
@@ -804,8 +812,8 @@ if (typeof window !== 'undefined') {
             <line x1="680" y1="545" x2="720" y2="545" stroke="#DC2626" stroke-width="2" marker-end="url(#arrowRed)" />
 
             <!-- Dòng chữ LỐI ĐI NỘI BỘ VĂN LANG -->
-            <text x="390" y="549" fill="#FFFFFF" font-size="10" font-weight="900" letter-spacing="2">LỐI ĐI NỘI BỘ VĂN LANG</text>
-            <text x="210" y="440" fill="#FFFFFF" font-size="9" font-weight="900" letter-spacing="1.5" transform="rotate(-90 210 440)">LỐI ĐI NỘI BỘ VĂN LANG</text>
+            <text x="390" y="549" fill="#FFFFFF" font-size="11.5" font-weight="900" letter-spacing="2">LỐI ĐI NỘI BỘ VĂN LANG</text>
+            <text x="210" y="440" fill="#FFFFFF" font-size="10.5" font-weight="900" letter-spacing="1.5" transform="rotate(-90 210 440)">LỐI ĐI NỘI BỘ VĂN LANG</text>
           </g>
 
           <!-- 4. CÁC KHỐI TÒA NHÀ & TIỆN ÍCH -->
@@ -852,7 +860,7 @@ if (typeof window !== 'undefined') {
                 <path d="M 3.2 2.3 L 3.8 0.8 L 5 0.8"/>
               </g>
 
-              <text x="32" y="9.5" fill="#DC2626" font-size="7.5" font-weight="800">LỐI VÀO HẦM XE</text>
+              <text x="32" y="9.5" fill="#DC2626" font-size="9.5" font-weight="800">LỐI VÀO HẦM XE</text>
             </g>
           </g>
 
@@ -939,7 +947,7 @@ if (typeof window !== 'undefined') {
           <!-- LỐI VÀO HẦM XE ngay đầu trên Tòa I (Cong từ đường trắng vào hầm Tòa I) -->
           <g class="interactive-element" onclick="openLandmarkModal('ham-toa-i')" transform="translate(255, 235)">
             <path d="M 22 2 Q 18 16 16 30" fill="none" stroke="#DC2626" stroke-width="2.5" marker-end="url(#arrowRed)" />
-            <text x="32" y="18" fill="#DC2626" font-size="8" font-weight="800">LỐI VÀO HẦM XE</text>
+            <text x="32" y="18" fill="#DC2626" font-size="9.5" font-weight="800">LỐI VÀO HẦM XE</text>
           </g>
 
           <!-- HÀNG 2: SÂN THỂ THAO - HỒ BƠI - TÒA G - TÒA F - TÒA D -->
@@ -958,7 +966,7 @@ if (typeof window !== 'undefined') {
             <line x1="342" y1="422" x2="342" y2="465" stroke="#E0F2FE" stroke-width="1.2" stroke-dasharray="3 3" />
             <line x1="360" y1="422" x2="360" y2="465" stroke="#E0F2FE" stroke-width="1.2" stroke-dasharray="3 3" />
             <line x1="378" y1="422" x2="378" y2="465" stroke="#E0F2FE" stroke-width="1.2" stroke-dasharray="3 3" />
-            <text x="360" y="449" fill="#FFFFFF" font-size="12" font-weight="800" text-anchor="middle">HỒ BƠI</text>
+            <text x="360" y="449" fill="#FFFFFF" font-size="13.5" font-weight="800" text-anchor="middle">HỒ BƠI</text>
           </g>
 
           <!-- TÒA G -> ĐÍCH ĐẾN: KHOA RĂNG HÀM MẶT (LẦU 12) - MÔ PHỎNG KIẾN TRÚC GIẬT CẤP CHUẨN THỰC TẾ -->
@@ -974,13 +982,13 @@ if (typeof window !== 'undefined') {
             
             <!-- Chữ TOÀ G & Gợi ý chạm xem ảnh -->
             <text x="491.5" y="452" fill="#FFFFFF" font-size="18" font-weight="900" text-anchor="middle">TOÀ G</text>
-            <text x="491.5" y="471" fill="#FFF1F2" font-size="8.5" font-weight="800" text-anchor="middle" letter-spacing="0.5">👆 CHẠM ĐỂ XEM ẢNH</text>
+            <text x="491.5" y="471" fill="#FFF1F2" font-size="10" font-weight="800" text-anchor="middle" letter-spacing="0.5">👆 CHẠM ĐỂ XEM ẢNH</text>
 
             <!-- BẢNG GHIM ĐÍCH ĐẾN ĐẶT PHÍA TRÊN KHỐI TÒA G (Y=370, RÕ RÀNG LẦU 12) -->
             <g transform="translate(491.5, 370)">
-              <rect x="-95" y="-12" width="190" height="24" rx="12" fill="#C8102E" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
-              <polygon points="-5,12 5,12 0,16" fill="#C8102E" />
-              <text x="0" y="4" fill="#FFFFFF" font-size="9.5" font-weight="900" text-anchor="middle" letter-spacing="0.5">📍 KHOA RHM (LẦU 12 - TÒA G)</text>
+              <rect x="-108" y="-13" width="216" height="26" rx="13" fill="#C8102E" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
+              <polygon points="-5,13 5,13 0,18" fill="#C8102E" />
+              <text x="0" y="4.5" fill="#FFFFFF" font-size="11" font-weight="900" text-anchor="middle" letter-spacing="0.5">📍 KHOA RHM (LẦU 12 - TÒA G)</text>
             </g>
           </g>
 
@@ -1014,8 +1022,8 @@ if (typeof window !== 'undefined') {
           <g class="interactive-element" onclick="openLandmarkModal('toa-d')">
             <path d="M 651 470 L 651 525 Q 651 545 676 545 L 695 545" 
                   fill="none" stroke="#DC2626" stroke-width="2" stroke-dasharray="6 4" marker-end="url(#arrowRed)" />
-            <text x="651" y="445" fill="#DC2626" font-size="7.5" font-weight="800" text-anchor="middle">LỐI LÊN</text>
-            <text x="651" y="455" fill="#DC2626" font-size="7.5" font-weight="800" text-anchor="middle">HẦM XE</text>
+            <text x="651" y="444" fill="#DC2626" font-size="9" font-weight="800" text-anchor="middle">LỐI LÊN</text>
+            <text x="651" y="455" fill="#DC2626" font-size="9" font-weight="800" text-anchor="middle">HẦM XE</text>
           </g>
 
           <!-- TÒA D (Khối vàng cam với kiến trúc cong uốn lượn đặc trưng - cách xa đường đi 30px) -->
@@ -1051,8 +1059,8 @@ if (typeof window !== 'undefined') {
               <text x="0" y="4" font-size="11" text-anchor="middle">📍</text>
             </g>
             <!-- Tên cổng & Địa chỉ -->
-            <text x="228" y="25" fill="#DC2626" font-size="11.5" font-weight="900">CỔNG CHÍNH ĐẶNG THÙY TRÂM</text>
-            <text x="228" y="39" fill="#64748B" font-size="8.5" font-weight="600">69/68 Đặng Thùy Trâm, P. Bình Lợi Trung</text>
+            <text x="228" y="24" fill="#DC2626" font-size="12" font-weight="900">CỔNG CHÍNH ĐẶNG THÙY TRÂM</text>
+            <text x="228" y="39" fill="#64748B" font-size="10" font-weight="600">69/68 Đặng Thùy Trâm, P. Bình Lợi Trung</text>
             <!-- Mũi tên chỉ dẫn bấm xem -->
             <text x="462" y="34" fill="#DC2626" font-size="13" font-weight="900" text-anchor="end">➔</text>
           </g>
@@ -1068,8 +1076,8 @@ if (typeof window !== 'undefined') {
               <text x="0" y="4" font-size="11" text-anchor="middle">📍</text>
             </g>
             <!-- Tên cổng & Địa chỉ -->
-            <text x="638" y="587" fill="#DC2626" font-size="11.5" font-weight="900">CỔNG SAU DƯƠNG QUẢNG HÀM</text>
-            <text x="638" y="601" fill="#64748B" font-size="8.5" font-weight="600">80/68 Dương Quảng Hàm, P. An Nhơn</text>
+            <text x="638" y="586" fill="#DC2626" font-size="12" font-weight="900">CỔNG SAU DƯƠNG QUẢNG HÀM</text>
+            <text x="638" y="601" fill="#64748B" font-size="10" font-weight="600">80/68 Dương Quảng Hàm, P. An Nhơn</text>
             <!-- Mũi tên chỉ dẫn bấm xem -->
             <text x="872" y="596" fill="#DC2626" font-size="13" font-weight="900" text-anchor="end">➔</text>
           </g>
@@ -1085,31 +1093,31 @@ if (typeof window !== 'undefined') {
               <text x="0" y="3.5" font-size="10" text-anchor="middle">📍</text>
             </g>
             <!-- Tên cổng & Địa chỉ -->
-            <text x="48" y="560" fill="#334155" font-size="11" font-weight="800">CỔNG SAU PHỤ (HẺM 566)</text>
-            <text x="48" y="574" fill="#64748B" font-size="8.5" font-weight="600">566 Nguyễn Thái Sơn, P. An Nhơn</text>
-            <text x="18" y="596" fill="#D97706" font-size="8" font-weight="700">⏱ Mở Thứ 2 - Thứ 7 (Đóng lúc 19h)</text>
+            <text x="48" y="559" fill="#334155" font-size="11.5" font-weight="800">CỔNG SAU PHỤ (HẺM 566)</text>
+            <text x="48" y="574" fill="#64748B" font-size="10" font-weight="600">566 Nguyễn Thái Sơn, P. An Nhơn</text>
+            <text x="18" y="596" fill="#D97706" font-size="9.5" font-weight="700">⏱ Mở Thứ 2 - Thứ 7 (Đóng lúc 19h)</text>
           </g>
 
           <!-- 6. BẢNG CHÚ THÍCH (ĐẶT Ở GÓC TRÊN BÊN PHẢI x=795, y=65 - HOÀN TOÀN KHÔNG CHE MAP) -->
           <g transform="translate(795, 65)" class="select-none">
-            <rect x="0" y="0" width="185" height="116" rx="10" fill="#FFFFFF" fill-opacity="0.96" stroke="#CBD5E1" stroke-width="1.2" filter="url(#buildingShadow)" />
-            <text x="92.5" y="19" fill="#1E293B" font-size="10.5" font-weight="900" text-anchor="middle">CHÚ THÍCH</text>
-            
-            <line x1="16" y1="36" x2="52" y2="36" stroke="#1D4ED8" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowBlue)" />
-            <text x="62" y="40" fill="#334155" font-size="9" font-weight="700">LỐI ĐI CHUNG</text>
+            <rect x="0" y="0" width="195" height="122" rx="10" fill="#FFFFFF" fill-opacity="0.96" stroke="#CBD5E1" stroke-width="1.2" filter="url(#buildingShadow)" />
+            <text x="97.5" y="20" fill="#1E293B" font-size="11" font-weight="900" text-anchor="middle">CHÚ THÍCH</text>
 
-            <line x1="16" y1="56" x2="52" y2="56" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowRed)" />
-            <text x="62" y="60" fill="#334155" font-size="9" font-weight="700">LỐI ĐI NỘI BỘ</text>
+            <line x1="16" y1="38" x2="52" y2="38" stroke="#1D4ED8" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowBlue)" />
+            <text x="62" y="42" fill="#334155" font-size="10.5" font-weight="700">LỐI ĐI CHUNG</text>
 
-            <line x1="16" y1="76" x2="52" y2="76" stroke="#16A34A" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowRouteWalk)" />
-            <text x="62" y="80" fill="#16A34A" font-size="9" font-weight="800">LỘ TRÌNH CỦA BẠN</text>
+            <line x1="16" y1="60" x2="52" y2="60" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowRed)" />
+            <text x="62" y="64" fill="#334155" font-size="10.5" font-weight="700">LỐI ĐI NỘI BỘ</text>
+
+            <line x1="16" y1="82" x2="52" y2="82" stroke="#16A34A" stroke-width="2.5" stroke-dasharray="6 4" marker-end="url(#arrowRouteWalk)" />
+            <text x="62" y="86" fill="#16A34A" font-size="10.5" font-weight="800">LỘ TRÌNH CỦA BẠN</text>
 
             <!-- Gạch phân cách & Hướng dẫn bấm khối -->
-            <line x1="14" y1="92" x2="171" y2="92" stroke="#E2E8F0" stroke-width="1" />
-            <g transform="translate(16, 105)">
+            <line x1="14" y1="97" x2="181" y2="97" stroke="#E2E8F0" stroke-width="1" />
+            <g transform="translate(16, 111)">
               <circle cx="6" cy="-2.5" r="7.5" fill="#DC2626" fill-opacity="0.12" />
               <text x="6" y="0.5" font-size="9" text-anchor="middle">👆</text>
-              <text x="18" y="0.5" fill="#DC2626" font-size="8.5" font-weight="900">BẤM KHỐI: XEM ẢNH & TIỆN ÍCH</text>
+              <text x="18" y="1" fill="#DC2626" font-size="10" font-weight="900">BẤM KHỐI: XEM ẢNH & TIỆN ÍCH</text>
             </g>
           </g>
 
@@ -1138,8 +1146,8 @@ if (typeof window !== 'undefined') {
                   fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" class="route-walk" marker-end="url(#arrowRouteWalk)" />
 
             <g transform="translate(490, 335)">
-              <rect x="-42" y="-9" width="84" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
-              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ qua Tòa G</text>
+              <rect x="-50" y="-11" width="100" height="22" rx="11" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
+              <text x="0" y="4" fill="#FFFFFF" font-size="10" font-weight="800" text-anchor="middle">🚶 Đi bộ qua Tòa G</text>
             </g>
           </g>
 
@@ -1162,8 +1170,8 @@ if (typeof window !== 'undefined') {
                   fill="none" stroke="#16A34A" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" class="route-walk" marker-end="url(#arrowRouteWalk)" />
 
             <g transform="translate(540, 515)">
-              <rect x="-35" y="-9" width="70" height="18" rx="9" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
-              <text x="0" y="3.5" fill="#FFFFFF" font-size="8.5" font-weight="800" text-anchor="middle">🚶 Đi bộ 50m</text>
+              <rect x="-42" y="-11" width="84" height="22" rx="11" fill="#16A34A" stroke="#FFFFFF" stroke-width="1.2" filter="url(#buildingShadow)"/>
+              <text x="0" y="4" fill="#FFFFFF" font-size="10" font-weight="800" text-anchor="middle">🚶 Đi bộ 50m</text>
             </g>
           </g>
 
@@ -1581,7 +1589,7 @@ if (typeof window !== 'undefined') {
       } else {
         mapSvg.style.transition = 'none';
       }
-      mapSvg.style.transform = `translate3d(${mapTranslateX.toFixed(1)}px, ${mapTranslateY.toFixed(1)}px, 0) scale(${mapScale.toFixed(3)})`;
+      mapSvg.style.transform = `translate(${mapTranslateX.toFixed(1)}px, ${mapTranslateY.toFixed(1)}px) scale(${mapScale.toFixed(3)})`;
     }
 
     function updateTransform(withTransition = true) {
