@@ -600,7 +600,7 @@ if (typeof window !== 'undefined') {
       <div class="grid grid-cols-3 gap-1 sm:gap-2 p-1 bg-slate-100 rounded-xl sm:rounded-2xl border border-slate-200">
         
         <!-- Tab 1: Xe máy (Vector Icon) -->
-        <button id="tabMotorbike" onclick="switchTab('motorbike')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-1.5 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base transition-all duration-200 active:scale-95 bg-vlu-red text-white shadow-md border border-red-500">
+        <button id="tabMotorbike" onclick="switchTab('motorbike')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-1.5 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base transition-all duration-200 active:scale-95 text-slate-700 hover:bg-slate-200/70">
           <svg class="w-4 h-4 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="5.5" cy="16.5" r="3"/>
             <circle cx="18.5" cy="16.5" r="3"/>
@@ -624,7 +624,7 @@ if (typeof window !== 'undefined') {
         </button>
 
         <!-- Tab 3: Grab / Xe công nghệ (Vector Icon) -->
-        <button id="tabGrab" onclick="switchTab('grab')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-1.5 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base transition-all duration-200 active:scale-95 text-slate-700 hover:bg-slate-200/70">
+        <button id="tabGrab" onclick="switchTab('grab')" class="tab-btn flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 py-1.5 sm:py-2.5 px-1 sm:px-2 rounded-lg sm:rounded-xl font-bold text-xs sm:text-base transition-all duration-200 active:scale-95 bg-vlu-red text-white shadow-md border border-red-500">
           <svg class="w-4 h-4 sm:w-6 sm:h-6 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M10 3h4l1 3H9l1-3Z"/>
             <path d="M5 17a2 2 0 1 0 4 0 2 2 0 0 0-4 0Z"/>
@@ -1119,7 +1119,7 @@ if (typeof window !== 'undefined') {
           <!-- 7. TUYẾN ĐƯỜNG CHỈ DẪN DẪN ĐỘNG THEO 3 TAB (DASH THƯ THÁI, CHẠY CHẬM RÕ NÉT) -->
 
           <!-- === TAB 1: TUYẾN XE MÁY === -->
-          <g id="route-motorbike" class="route-layer pointer-events-none">
+          <g id="route-motorbike" class="route-layer pointer-events-none" style="display: none;">
             <!-- Xe máy chạy: Cổng chính -> theo lòng đường trắng bao quanh Tòa A -> Lối vào Hầm Tòa I (Xanh lá động từ Cổng chính) -->
             <path d="M 500 25 
                      L 500 100 
@@ -1186,7 +1186,7 @@ if (typeof window !== 'undefined') {
           </g>
 
           <!-- === TAB 3: TUYẾN GRAB / XE CÔNG NGHỆ (ĐẾN CỔNG SAU GIỮA TÒA G VÀ F) === -->
-          <g id="route-grab" class="route-layer pointer-events-none" style="display: none;">
+          <g id="route-grab" class="route-layer pointer-events-none" style="display: inline;">
             <!-- Điểm dừng thả khách Grab tại Cổng Sau Dương Quảng Hàm (x=565, y=615) -->
             <g transform="translate(565, 615)">
               <circle cx="0" cy="0" r="12" fill="#D97706" stroke="#FFFFFF" stroke-width="2" filter="url(#buildingShadow)" />
@@ -1215,18 +1215,18 @@ if (typeof window !== 'undefined') {
     <section class="bg-white rounded-2xl shadow-md border border-slate-200 p-4 sm:p-5">
       
       <div id="routeHeader" class="border-b border-slate-100 pb-3 mb-4">
-        <h2 id="routeTitle" class="text-lg sm:text-xl font-bold text-vlu-navy">Hướng Dẫn Đi Xe Máy Vào Khám Bệnh</h2>
+        <h2 id="routeTitle" class="text-lg sm:text-xl font-bold text-vlu-navy">Hướng Dẫn Đi Grab / Taxi Đến Cổng Sau</h2>
       </div>
 
       <!-- Các bước cụ thể (Step by Step Timeline) -->
       <div class="flex flex-col gap-3 mb-5" id="stepList"></div>
 
       <!-- Nút mở Google Maps dẫn đường -->
-      <a id="btnGoogleMaps" href="https://maps.app.goo.gl/jYkMEh4dj6X1SdFP7" target="_blank" rel="noopener noreferrer" class="w-full bg-vlu-red hover:bg-vlu-redDark active:scale-[0.99] text-white py-3.5 px-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2 transition-all">
+      <a id="btnGoogleMaps" href="https://maps.app.goo.gl/XTdJiLT67RdooXLB8" target="_blank" rel="noopener noreferrer" class="w-full bg-vlu-red hover:bg-vlu-redDark active:scale-[0.99] text-white py-3.5 px-4 rounded-xl font-bold text-base shadow-lg flex items-center justify-center gap-2 transition-all">
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
         </svg>
-        <span id="btnGoogleMapsText">Mở Google Maps dẫn đường đến Cổng Chính</span>
+        <span id="btnGoogleMapsText">Mở Google Maps dẫn đường đến Cổng Sau (Dương Quảng Hàm)</span>
       </a>
 
     </section>
@@ -1546,7 +1546,7 @@ if (typeof window !== 'undefined') {
       }
     };
 
-    let currentTab = 'motorbike';
+    let currentTab = 'grab';
     let mapScale = 1;
     let mapTranslateX = 0;
     let mapTranslateY = 0;
@@ -1984,7 +1984,9 @@ if (typeof window !== 'undefined') {
     });
 
     window.addEventListener('DOMContentLoaded', () => {
-      switchTab('motorbike');
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialTab = urlParams.get('tab') || 'grab';
+      switchTab(initialTab);
     });
   
     // Google Analytics 4 Custom Event Listeners
