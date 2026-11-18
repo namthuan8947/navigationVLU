@@ -187,11 +187,15 @@ var LANDMARKS_CONFIG = {
     images: [
       {
         url: "images/toa-g-thuc-te.jpg",
-        caption: "Mặt tiền & Sảnh chính Tòa G: Lối vào sảnh trệt đón tiếp và cụm thang máy P9 - P10 lên Lầu 12"
+        caption: "Mặt tiền & Sảnh chính Tòa G: Lối vào sảnh trệt đón tiếp và cụm thang máy lên Lầu 12"
       },
       {
         url: "images/thang-may-toa-g.jpg",
         caption: "Sảnh tầng trệt Tòa G: Cụm thang máy P9 - P10 để bấm lên Lầu 12 (Khoa Răng Hàm Mặt)"
+      },
+      {
+        url: "images/le-tan-toa-g.jpg",
+        caption: "Quầy Lễ Tân Khoa Răng Hàm Mặt (Lầu 12 - Tòa G): Điểm đón tiếp & tiếp nhận hồ sơ bệnh án"
       },
       {
         url: "images/toa-g-so-do-3d.jpg",
@@ -536,21 +540,25 @@ var LANDMARKS_CONFIG = {
 
   "loi-di-noi-bo": {
     id: "loi-di-noi-bo",
-    name: "Lối Đi Nội Bộ & Toàn Cảnh Campus",
-    badge: "LỐI ĐI NỘI BỘ & TỔNG THỂ",
+    name: "Lối Đi Nội Bộ & Tuyến Đường Vào Tòa G",
+    badge: "LỐI ĐI NỘI BỘ",
     badgeColor: "#EA580C",
-    tagline: "Tuyến đường nội bộ bao quanh phía Nam và Tây khuôn viên",
-    description: "Tuyến đường nội bộ (dải màu cam) kết nối Cổng sau phụ (Hẻm 566), Cổng sau Dương Quảng Hàm với các tòa nhà I, G, F, D và toàn bộ các phân khu chức năng Cơ sở chính Văn Lang.",
-    floorGuide: "Kết nối Cổng sau phụ (Hẻm 566), Cổng sau Dương Quảng Hàm với các tòa nhà I, G, F, D.",
+    tagline: "Tuyến đường nội bộ rợp bóng cây kết nối Cổng sau Dương Quảng Hàm với Tòa G",
+    description: "Tuyến đường nội bộ (dải màu cam) kết nối Cổng sau Dương Quảng Hàm với các tòa nhà I, G, F, D. Từ Cổng sau đi bộ thẳng qua cổng 50m qua bốt bảo vệ rồi quẹo trái là tới thẳng sảnh chính Tòa G.",
+    floorGuide: "Đi bộ thẳng qua cổng 50m, quẹo trái là đến sảnh Tòa G.",
     patientTips: "",
     images: [
+      {
+        url: "images/cong-sau.jpg",
+        caption: "Lối vào Cổng Sau (80/68 Dương Quảng Hàm): Tuyến đường nội bộ dẫn vào Tòa G"
+      },
       {
         url: "images/co-so-chinh-so-do-3d.jpg",
         caption: "Sơ đồ 3D toàn cảnh Cơ sở chính Văn Lang kết nối Cổng chính Đặng Thùy Trâm & Cổng sau Dương Quảng Hàm"
       }
     ],
-    imageUrl: "images/co-so-chinh-so-do-3d.jpg",
-    imageCaption: "Sơ đồ 3D toàn cảnh Cơ sở chính Văn Lang kết nối Cổng chính Đặng Thùy Trâm & Cổng sau Dương Quảng Hàm",
+    imageUrl: "images/cong-sau.jpg",
+    imageCaption: "Lối vào Cổng Sau (80/68 Dương Quảng Hàm): Tuyến đường nội bộ dẫn vào Tòa G",
     googleMapsUrl: "",
     coords: { x: 450, y: 545 }
   }
@@ -1410,37 +1418,43 @@ if (typeof window !== 'undefined') {
             num: 1,
             title: 'Đặt xe đến 80/68 Dương Quảng Hàm, P. An Nhơn (ưu tiên xe máy vì đường hẹp)',
             desc: 'Địa chỉ Cổng Sau Trường ĐH Văn Lang (đối diện GS25). Khuyến khích đặt xe máy/GrabBike vì ngõ hẹp thuận tiện di chuyển nhanh.',
-            landmarkId: 'cong-sau'
+            landmarkId: 'cong-sau',
+            imageIndex: 0
           },
           {
             num: 2,
             title: 'Đi thẳng qua cổng vào đường lối đi nội bộ Văn Lang',
             desc: 'Xuống xe tại cổng, đi bộ thẳng qua bốt bảo vệ để vào tuyến đường nội bộ trong khuôn viên trường.',
-            landmarkId: 'loi-di-noi-bo'
+            landmarkId: 'cong-sau',
+            imageIndex: 0
           },
           {
             num: 3,
             title: 'Sau khi đi thẳng 50m, quẹo trái và tiếp tục đi bộ',
             desc: 'Đi bộ theo tuyến đường nội bộ khoảng 50m rồi quẹo trái hướng về phía mặt tiền Tòa G.',
-            landmarkId: 'loi-di-noi-bo'
+            landmarkId: 'toa-g',
+            imageIndex: 0
           },
           {
             num: 4,
             title: 'Rẽ phải trực tiếp vào sảnh thang máy của Tòa G',
             desc: 'Bước qua cửa kính sảnh trệt Tòa G, rẽ phải vào ngay khu vực cụm thang máy.',
-            landmarkId: 'toa-g'
+            landmarkId: 'toa-g',
+            imageIndex: 0
           },
           {
             num: 5,
             title: 'Bấm thang máy lên lầu 12 để đến Khoa Răng Hàm Mặt',
             desc: 'Sử dụng thang máy P9 hoặc P10 tại sảnh để di chuyển lên Lầu 12 (toàn bộ Lầu 12 là Khoa Răng Hàm Mặt).',
-            landmarkId: 'toa-g'
+            landmarkId: 'toa-g',
+            imageIndex: 1
           },
           {
             num: 6,
             title: 'Ra khỏi thang máy, đi thẳng và quẹo phải để đến lễ tân',
             desc: 'Bước ra khỏi thang máy Lầu 12, đi thẳng theo hành lang và quẹo phải để đến Quầy Lễ Tân tiếp nhận bệnh nhân khám bệnh.',
             landmarkId: 'toa-g',
+            imageIndex: 2,
             highlight: true
           }
         ]
@@ -1459,37 +1473,43 @@ if (typeof window !== 'undefined') {
             num: 1,
             title: 'Vào Cổng Chính (69/68 Đặng Thùy Trâm, P. Bình Lợi Trung)',
             desc: 'Rẽ phải đi thẳng 150m đến hầm gửi xe Tòa A.',
-            landmarkId: 'cong-chinh'
+            landmarkId: 'cong-chinh',
+            imageIndex: 0
           },
           {
             num: 2,
             title: 'Gửi xe tại Hầm Tòa A (Hầm B3)',
             desc: 'Chạy thẳng xuống hầm B3 để gửi xe (áp dụng cho cả xe máy và ô tô).',
-            landmarkId: 'ham-toa-a'
+            landmarkId: 'ham-toa-a',
+            imageIndex: 0
           },
           {
             num: 3,
             title: 'Đi cầu thang để lên khuôn viên trường',
             desc: 'Sau khi gửi xe xong, đi cầu thang bộ hoặc thang máy hầm để lên lại mặt đất khuôn viên trường.',
-            landmarkId: 'toa-a'
+            landmarkId: 'toa-a',
+            imageIndex: 0
           },
           {
             num: 4,
             title: 'Tiếp tục đi bộ qua Tòa G, đến sảnh Tòa G',
             desc: 'Đi bộ theo lối đi trong khuôn viên qua hướng Tòa G để đến sảnh chính Tòa G.',
-            landmarkId: 'toa-g'
+            landmarkId: 'toa-g',
+            imageIndex: 0
           },
           {
             num: 5,
             title: 'Đi thang máy P9 hoặc P10 lên Lầu 12 đến Khoa RHM',
             desc: 'Tại sảnh trệt Tòa G, sử dụng thang máy P9 hoặc P10 để di chuyển lên Lầu 12 (Khoa Răng Hàm Mặt).',
-            landmarkId: 'toa-g'
+            landmarkId: 'toa-g',
+            imageIndex: 1
           },
           {
             num: 6,
             title: 'Ra khỏi thang, đi thẳng và quẹo phải để đến Lễ tân',
             desc: 'Bước ra khỏi thang máy Lầu 12, đi thẳng và quẹo phải để đến Quầy Lễ Tân tiếp nhận bệnh nhân khám bệnh.',
             landmarkId: 'toa-g',
+            imageIndex: 2,
             highlight: true
           }
         ]
@@ -1766,13 +1786,16 @@ if (typeof window !== 'undefined') {
 
       const stepListEl = document.getElementById('stepList');
       stepListEl.innerHTML = data.steps.map(step => `
-        <div class="flex items-start gap-3 p-3 rounded-xl ${step.highlight ? 'bg-red-50/80 border border-red-200' : 'hover:bg-slate-50 border border-transparent'} transition-all cursor-pointer" onclick="openLandmarkModal('${step.landmarkId}')">
+        <div class="flex items-start gap-3 p-3 rounded-xl ${step.highlight ? 'bg-red-50/80 border border-red-200' : 'hover:bg-slate-50 border border-transparent'} transition-all cursor-pointer group" onclick="openLandmarkModal('${step.landmarkId}', ${typeof step.imageIndex === 'number' ? step.imageIndex : 0})">
           <div class="w-8 h-8 rounded-full ${step.highlight ? 'bg-vlu-red' : step.num === 1 ? 'bg-vlu-navy' : 'bg-blue-600'} text-white font-bold flex items-center justify-center flex-shrink-0 text-sm shadow">${step.num}</div>
-          <div class="flex-1">
-            <h3 class="font-bold ${step.highlight ? 'text-vlu-red' : 'text-slate-900'} text-base">${step.title}</h3>
-            <p class="text-slate-600 text-sm mt-0.5">${step.desc}</p>
+          <div class="flex-1 min-w-0">
+            <h3 class="font-bold ${step.highlight ? 'text-vlu-red' : 'text-slate-900'} text-sm sm:text-base">${step.title}</h3>
+            <p class="text-slate-600 text-xs sm:text-sm mt-0.5">${step.desc}</p>
           </div>
-          <span class="text-xs text-slate-400 self-center">Chi tiết ➔</span>
+          <span class="text-xs font-semibold ${step.highlight ? 'text-vlu-red bg-red-100 group-hover:bg-red-200' : 'text-blue-600 bg-blue-50 group-hover:bg-blue-100'} px-2 py-1 rounded-lg flex items-center gap-1 self-center flex-shrink-0 transition-colors">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <span>Xem ảnh</span>
+          </span>
         </div>
       `).join('');
 
@@ -1843,12 +1866,12 @@ if (typeof window !== 'undefined') {
     }
 
     // Modal chi tiết điểm mốc
-    function openLandmarkModal(landmarkId) {
+    function openLandmarkModal(landmarkId, initialImgIndex = 0) {
       const data = (window.LANDMARKS_CONFIG && window.LANDMARKS_CONFIG[landmarkId]) ? window.LANDMARKS_CONFIG[landmarkId] : null;
       if (!data) return;
 
       if (typeof gtag === 'function') {
-        gtag('event', 'view_landmark', { landmark_id: landmarkId, landmark_name: data.name });
+        gtag('event', 'view_landmark', { landmark_id: landmarkId, landmark_name: data.name, initial_img_index: initialImgIndex });
       }
 
       document.getElementById('modalBadge').textContent = data.badge;
@@ -1865,8 +1888,6 @@ if (typeof window !== 'undefined') {
         if (floorBox) floorBox.classList.add('hidden');
       }
 
-
-      
       const imgEl = document.getElementById('modalImage');
       const placeholderEl = document.getElementById('modalPlaceholder');
       const captionEl = document.getElementById('modalImageCaption');
@@ -1883,7 +1904,8 @@ if (typeof window !== 'undefined') {
       if (currentModalImages.length > 0) {
         placeholderEl.classList.add('hidden');
         if (photoCaptionBar) photoCaptionBar.classList.remove('hidden');
-        renderModalImage(0);
+        const startIdx = (typeof initialImgIndex === 'number' && initialImgIndex >= 0 && initialImgIndex < currentModalImages.length) ? initialImgIndex : 0;
+        renderModalImage(startIdx);
       } else {
         imgEl.src = '';
         imgEl.classList.add('hidden');
